@@ -9,7 +9,7 @@ Very exciting app that does planning and stuff
 - `node >= v18.12.1`
 
 ### To start:
-
+In the root directory of the project run:
 1. ```javascript
    yarn
    ```
