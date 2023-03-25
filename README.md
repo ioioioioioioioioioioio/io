@@ -11,7 +11,7 @@ Very exciting app that does planning and stuff
 ### To start:
 
 1. ```javascript
-   yarn;
+   yarn
    ```
 
 2. ```javascript
