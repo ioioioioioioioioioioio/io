@@ -11,7 +11,7 @@ Very exciting app that does planning and stuff
 ### To start:
 
 1. ```javascript
-   yarn
+   yarn;
    ```
 
 2. ```javascript
@@ -19,10 +19,11 @@ Very exciting app that does planning and stuff
    ```
 3. Scan the QR code in `Expo Go` app (available in Play Store and App Store)
 
-# Development
+# Code Styling
 
 Upon launching the project in VSCode you should be prompted to install `prettier` and `eslint`, agree or install the extensions manually if the popup doesn't show.
 
-Open VSCode settings, search for `default formatter` setting for the editor and set it to `Prettier`. It is also **highly** recommended to enable the "Reformat on save" option for Prettier. If you commit code that doesn't match the prettier config I'm going to presonally kill you.
+Open VSCode settings, search for `Editor: Default Formatter` setting for the editor and set it to `EsLint`. It is also **highly** recommended to enable the "Reformat on save" option.
+You also need to remember to enable `Eslint: Enable` and the `Eslint> Format: Enable` options in settings. If you commit code that doesn't match the prettier/eslint config I'm presonally going to kill you. I recommend using the searchbar when looking for settings.
 
-You can also use other editors such as WebStorm, just install the Prettier extension and make sure it is correctly using our `.prettierrc` config file.
+You can also use other editors such as WebStorm, just install EsLint and Prettier and make sure Prettier is correctly using our `.prettierrc` config file.
