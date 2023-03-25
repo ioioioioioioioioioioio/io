@@ -23,7 +23,7 @@ In the root directory of the project run:
 
 Upon launching the project in VSCode you should be prompted to install `prettier` and `eslint`, agree or install the extensions manually if the popup doesn't show.
 
-Open VSCode settings, search for `Editor: Default Formatter` setting for the editor and set it to `EsLint`. It is also **highly** recommended to enable the "Reformat on save" option.
+Open VSCode settings, search for `Editor: Default Formatter` setting for the editor and set it to `EsLint`. It is also **highly** recommended to enable the "Format on save" option.
 You also need to remember to enable `Eslint: Enable` and the `Eslint> Format: Enable` options in settings. If you commit code that doesn't match the prettier/eslint config I'm personally going to kill you. I recommend using the searchbar when looking for settings in vscode.
 
 You can also use other editors such as WebStorm, just install EsLint and Prettier and make sure Prettier is correctly using our `.prettierrc` config file.
