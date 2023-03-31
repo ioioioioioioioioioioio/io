@@ -18,7 +18,7 @@ jobs:
         with:
           cmd: install
 
-      - name: Run install
+      - name: Run eslint
         uses: borales/actions-yarn@v4
         with:
           cmd: eslint . --max-warnings 0
