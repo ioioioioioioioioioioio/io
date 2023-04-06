@@ -7,7 +7,7 @@ import ListElem from '../components/ListElem';
 export type Feature = {
   title: string;
   // We should be able to find a better way to do this other than listing all possible screen names
-  screenName: 'PetScreen';
+  screenName: 'PetScreen' | 'InfoScreen';
 };
 
 type FeaturesScreenProps = NativeStackScreenProps<RootStackParamList, 'FeaturesScreen'>;
