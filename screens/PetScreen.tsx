@@ -6,12 +6,8 @@ import Animated, {
   withSpring,
 } from 'react-native-reanimated';
 
-import { useAppDispatch } from '../redux/hooks';
-import { increment } from '../redux/slices/penguinSlice';
-
 export default function PetScreen() {
   const offset = useSharedValue(0);
-  const dispatch = useAppDispatch();
 
   const animatedStyles = useAnimatedStyle(() => {
     return {
@@ -43,7 +39,6 @@ export default function PetScreen() {
       <Pressable
         style={styles.button}
         onPress={() => {
-          dispatch(increment());
           offset.value = withSequence(
             withSpring([10, -10][Math.floor(Math.random() * 2)], {
               damping: 10,
