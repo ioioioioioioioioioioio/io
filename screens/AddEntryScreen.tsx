@@ -1,9 +1,10 @@
 import { MaterialIcons, AntDesign, FontAwesome5 } from '@expo/vector-icons';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React from 'react';
-import { StyleSheet, View, Text, TextInput, Pressable, Alert } from 'react-native';
+import { StyleSheet, View, TextInput, Alert } from 'react-native';
 
 import { RootStackParamList } from '../App';
+import Button from '../components/Button';
 
 type AddEntryScreenProps = NativeStackScreenProps<RootStackParamList, 'AddEntryScreen'>;
 
@@ -27,6 +28,8 @@ export default function AddEntryScreen({ navigation }: AddEntryScreenProps) {
     navigation.goBack();
   }, [name, amount, isIncome, navigation]);
 
+  const amountInput = React.useRef<TextInput>(null);
+
   return (
     <View style={styles.container}>
       <View style={styles.inputContainer}>
@@ -36,6 +39,7 @@ export default function AddEntryScreen({ navigation }: AddEntryScreenProps) {
           placeholder={defaultName}
           onChangeText={setName}
           value={name}
+          onSubmitEditing={() => amountInput?.current?.focus()}
         />
         <TextInput
           style={[
@@ -46,25 +50,21 @@ export default function AddEntryScreen({ navigation }: AddEntryScreenProps) {
           keyboardType="numeric"
           onChangeText={(amount) => setAmount(amount.replace('-', ''))}
           value={amount}
+          ref={amountInput}
+          onSubmitEditing={addEntry}
         />
       </View>
 
       <View style={styles.buttonContainer}>
-        <Pressable onPress={() => navigation.goBack()}>
-          <Text>
-            <MaterialIcons name="cancel" size={buttonSize} color="black" />
-          </Text>
-        </Pressable>
-        <Pressable onPress={() => setIsIncome((v) => !v)}>
-          <Text>
-            <AntDesign name="swap" size={buttonSize} color="black" />
-          </Text>
-        </Pressable>
-        <Pressable onPress={addEntry}>
-          <Text>
-            <FontAwesome5 name="check" size={buttonSize} color="black" />
-          </Text>
-        </Pressable>
+        <Button onPress={() => navigation.goBack()}>
+          <MaterialIcons name="cancel" size={buttonSize} color="black" />
+        </Button>
+        <Button onPress={() => setIsIncome((v) => !v)}>
+          <AntDesign name="swap" size={buttonSize} color="black" />
+        </Button>
+        <Button onPress={addEntry}>
+          <FontAwesome5 name="check" size={buttonSize} color="black" />
+        </Button>
       </View>
     </View>
   );
