@@ -5,18 +5,22 @@ import { StyleSheet, View, TextInput, Alert } from 'react-native';
 
 import { RootStackParamList } from '../App';
 import Button from '../components/Button';
+import { useAppDispatch } from '../redux/hooks';
+import { addEntry } from '../redux/slices/entrySlice';
 
 type AddEntryScreenProps = NativeStackScreenProps<RootStackParamList, 'AddEntryScreen'>;
 
 export default function AddEntryScreen({ navigation }: AddEntryScreenProps) {
+  const dispatch = useAppDispatch();
+
   const [isIncome, setIsIncome] = React.useState(false);
   const [name, setName] = React.useState('');
   const [amount, setAmount] = React.useState('');
 
   const defaultName = isIncome ? 'New income' : 'New expense';
 
-  const addEntry = React.useCallback(() => {
-    const finalName = name ?? defaultName;
+  const onSubmitEntry = React.useCallback(() => {
+    const finalName = name.length === 0 ? defaultName : name;
     const numericAmount = isIncome ? Number(amount) : -Number(amount);
 
     if (amount === '' || Number.isNaN(numericAmount)) {
@@ -24,7 +28,7 @@ export default function AddEntryScreen({ navigation }: AddEntryScreenProps) {
       return;
     }
 
-    console.log({ finalName, numericAmount });
+    dispatch(addEntry({ name: finalName, amount: numericAmount }));
     navigation.goBack();
   }, [name, amount, isIncome, navigation]);
 
@@ -51,7 +55,7 @@ export default function AddEntryScreen({ navigation }: AddEntryScreenProps) {
           onChangeText={(amount) => setAmount(amount.replace('-', ''))}
           value={amount}
           ref={amountInput}
-          onSubmitEditing={addEntry}
+          onSubmitEditing={onSubmitEntry}
         />
       </View>
 
@@ -62,7 +66,7 @@ export default function AddEntryScreen({ navigation }: AddEntryScreenProps) {
         <Button onPress={() => setIsIncome((v) => !v)}>
           <AntDesign name="swap" size={buttonSize} color="black" />
         </Button>
-        <Button onPress={addEntry}>
+        <Button onPress={onSubmitEntry}>
           <FontAwesome5 name="check" size={buttonSize} color="black" />
         </Button>
       </View>
