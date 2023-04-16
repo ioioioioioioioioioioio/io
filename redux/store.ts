@@ -1,10 +1,12 @@
 import { configureStore } from '@reduxjs/toolkit';
 
+import entriesReducer from './slices/entrySlice';
 import penguinReducer from './slices/penguinSlice';
 
 export const store = configureStore({
   reducer: {
     penguin: penguinReducer,
+    entries: entriesReducer,
   },
 });
 
