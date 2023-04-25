@@ -12,7 +12,14 @@ const entryAdapter = createEntityAdapter<EntryState>();
 
 export const entrySlice = createSlice({
   name: 'entries',
-  initialState: entryAdapter.getInitialState(),
+  initialState: entryAdapter.getInitialState({
+    ids: [1, 2, 3],
+    entities: {
+      1: { id: 1, name: 'Salary', amount: 5000 },
+      2: { id: 2, name: 'Rent', amount: -1000 },
+      3: { id: 3, name: 'Food', amount: -1000 },
+    },
+  }),
   reducers: {
     addEntry: (state, action: PayloadAction<Omit<EntryState, 'id'>>) => {
       const id = Math.max(0, ...state.ids.map(Number)) + 1;

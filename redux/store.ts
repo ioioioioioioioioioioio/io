@@ -3,12 +3,14 @@ import { configureStore } from '@reduxjs/toolkit';
 import categoriesReducer from './slices/categoriesSlice';
 import entriesReducer from './slices/entrySlice';
 import penguinReducer from './slices/penguinSlice';
+import themingReducer from './slices/themingSlice';
 
 export const store = configureStore({
   reducer: {
     penguin: penguinReducer,
     entries: entriesReducer,
     categories: categoriesReducer,
+    theme: themingReducer,
   },
 });
 
