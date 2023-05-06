@@ -2,23 +2,27 @@ import { MaterialIcons, AntDesign, FontAwesome5 } from '@expo/vector-icons';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React, { useState, useRef } from 'react';
 import { StyleSheet, View, TextInput, Alert, Text, TouchableOpacity } from 'react-native';
+import { useSelector } from 'react-redux';
 
 import { RootStackParamList } from '../App';
 import Button from '../components/Button';
 import CategoryList from '../components/CategoryList';
 import { useAppDispatch } from '../redux/hooks';
+import { findCategory, selectFoundCategory } from '../redux/slices/categoriesSlice';
 import { addEntry } from '../redux/slices/entrySlice';
 
 type AddEntryScreenProps = NativeStackScreenProps<RootStackParamList, 'AddEntryScreen'>;
 
 export default function AddEntryScreen({ navigation }: AddEntryScreenProps) {
   const dispatch = useAppDispatch();
+  const foundCategory = useSelector(selectFoundCategory);
 
   const [isIncome, setIsIncome] = useState(false);
   const [name, setName] = useState('');
   const [amount, setAmount] = useState('');
   const [selectedCategoryName, setSelectedCategoryName] = useState('');
   const [selectedCategoryColor, setSelectedCategoryColor] = useState('');
+  const [selectedCategoryId, setSelectedCategoryId] = useState(0);
   const [showCategoryList, setShowCategoryList] = useState(false);
 
   const defaultName = isIncome ? 'New income' : 'New expense';
@@ -26,13 +30,13 @@ export default function AddEntryScreen({ navigation }: AddEntryScreenProps) {
   const onSubmitEntry = React.useCallback(() => {
     const finalName = name.length === 0 ? defaultName : name;
     const numericAmount = isIncome ? Number(amount) : -Number(amount);
-
+    dispatch(findCategory(selectedCategoryId));
     if (amount === '' || Number.isNaN(numericAmount)) {
       Alert.alert('Invalid amount', 'Please enter a correct amount');
       return;
     }
 
-    dispatch(addEntry({ name: finalName, amount: numericAmount }));
+    dispatch(addEntry({ name: finalName, amount: numericAmount, category: foundCategory }));
     navigation.goBack();
   }, [name, amount, isIncome, navigation]);
 
@@ -82,6 +86,7 @@ export default function AddEntryScreen({ navigation }: AddEntryScreenProps) {
         {showCategoryList && (
           <CategoryList
             onCategorySelect={(category) => {
+              setSelectedCategoryId(category.id);
               setSelectedCategoryName(category.categoryName);
               setSelectedCategoryColor(category.categoryColor);
               setShowCategoryList(false);
