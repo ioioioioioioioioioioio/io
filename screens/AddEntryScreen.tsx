@@ -1,5 +1,6 @@
 import { MaterialIcons, AntDesign, FontAwesome5 } from '@expo/vector-icons';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { Moment } from 'moment';
 import React, { useState, useRef } from 'react';
 import { StyleSheet, View, TextInput, Alert, Text, TouchableOpacity, Modal } from 'react-native';
 import CalendarPicker from 'react-native-calendar-picker';
@@ -11,7 +12,6 @@ import Button from '../components/Button';
 import CategoryList from '../components/CategoryList';
 import { useAppDispatch } from '../redux/hooks';
 import { addEntry } from '../redux/slices/entrySlice';
-import { Moment } from 'moment';
 
 type AddEntryScreenProps = NativeStackScreenProps<RootStackParamList, 'AddEntryScreen'>;
 
