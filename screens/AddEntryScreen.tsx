@@ -2,12 +2,11 @@ import { MaterialIcons, AntDesign, FontAwesome5 } from '@expo/vector-icons';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Moment } from 'moment';
 import React, { useState, useRef } from 'react';
-import { useSelector } from 'react-redux';
 import { StyleSheet, View, TextInput, Alert, Text, TouchableOpacity, Modal } from 'react-native';
 import CalendarPicker from 'react-native-calendar-picker';
 import { SelectList } from 'react-native-dropdown-select-list';
 import { CheckBox } from 'react-native-elements';
-
+import { useSelector } from 'react-redux';
 
 import { RootStackParamList } from '../App';
 import Button from '../components/Button';
