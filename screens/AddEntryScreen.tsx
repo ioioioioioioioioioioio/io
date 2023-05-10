@@ -11,6 +11,7 @@ import Button from '../components/Button';
 import CategoryList from '../components/CategoryList';
 import { useAppDispatch } from '../redux/hooks';
 import { addEntry } from '../redux/slices/entrySlice';
+import { Moment } from 'moment';
 
 type AddEntryScreenProps = NativeStackScreenProps<RootStackParamList, 'AddEntryScreen'>;
 
@@ -25,9 +26,14 @@ export default function AddEntryScreen({ navigation }: AddEntryScreenProps) {
   const [showCategoryList, setShowCategoryList] = useState(false);
   const [showCalendarModal, setShowCalendarModal] = useState(false);
   const [cyclicExpenseChecked, setCyclicExpenseChecked] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(new Date());
   const [selectedCycleTime, setSelectedCycleTime] = useState('Timestamp');
 
   const defaultName = isIncome ? 'New income' : 'New expense';
+
+  const onDateChange = (date: Moment) => {
+    setSelectedDate(date.toDate());
+  };
 
   const onSubmitEntry = React.useCallback(() => {
     const finalName = name.length === 0 ? defaultName : name;
@@ -94,6 +100,20 @@ export default function AddEntryScreen({ navigation }: AddEntryScreenProps) {
             }}
           />
         )}
+        <View style={styles.detailContainer}>
+          <Button
+            onPress={() => setShowCalendarModal(true)}
+            style={{ paddingBottom: 5, paddingRight: 10 }}>
+            <AntDesign name="calendar" size={45} />
+          </Button>
+          <Text style={styles.detailText}>
+            {selectedDate.getDate() +
+              '.' +
+              (selectedDate.getMonth() + 1) +
+              '.' +
+              selectedDate.getFullYear()}
+          </Text>
+        </View>
         <View style={styles.cyclicContainer}>
           <CheckBox
             title="Cyclic expense"
@@ -104,9 +124,6 @@ export default function AddEntryScreen({ navigation }: AddEntryScreenProps) {
             center
             containerStyle={styles.cyclicCheckbox}
           />
-          <Button onPress={() => setShowCalendarModal(true)} style={{ paddingBottom: 5 }}>
-            {cyclicExpenseChecked && <AntDesign name="calendar" size={40} />}
-          </Button>
           <View>
             {cyclicExpenseChecked && (
               <SelectList
@@ -124,7 +141,7 @@ export default function AddEntryScreen({ navigation }: AddEntryScreenProps) {
         </View>
         <View>
           <Modal visible={showCalendarModal} style={styles.modalContainer}>
-            <CalendarPicker />
+            <CalendarPicker onDateChange={onDateChange} />
             <Button onPress={() => setShowCalendarModal(false)} style={{ alignItems: 'center' }}>
               <MaterialIcons name="cancel" size={buttonSize} color="black" />
             </Button>
