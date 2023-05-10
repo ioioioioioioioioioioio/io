@@ -1,8 +1,13 @@
 import { MaterialIcons, AntDesign, FontAwesome5 } from '@expo/vector-icons';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { Moment } from 'moment';
 import React, { useState, useRef } from 'react';
-import { StyleSheet, View, TextInput, Alert, Text, TouchableOpacity } from 'react-native';
 import { useSelector } from 'react-redux';
+import { StyleSheet, View, TextInput, Alert, Text, TouchableOpacity, Modal } from 'react-native';
+import CalendarPicker from 'react-native-calendar-picker';
+import { SelectList } from 'react-native-dropdown-select-list';
+import { CheckBox } from 'react-native-elements';
+
 
 import { RootStackParamList } from '../App';
 import Button from '../components/Button';
@@ -24,8 +29,16 @@ export default function AddEntryScreen({ navigation }: AddEntryScreenProps) {
   const [selectedCategoryColor, setSelectedCategoryColor] = useState('');
   const [selectedCategoryId, setSelectedCategoryId] = useState(0);
   const [showCategoryList, setShowCategoryList] = useState(false);
+  const [showCalendarModal, setShowCalendarModal] = useState(false);
+  const [cyclicExpenseChecked, setCyclicExpenseChecked] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedCycleTime, setSelectedCycleTime] = useState('Timestamp');
 
   const defaultName = isIncome ? 'New income' : 'New expense';
+
+  const onDateChange = (date: Moment) => {
+    setSelectedDate(date.toDate());
+  };
 
   const onSubmitEntry = React.useCallback(() => {
     const finalName = name.length === 0 ? defaultName : name;
@@ -93,6 +106,53 @@ export default function AddEntryScreen({ navigation }: AddEntryScreenProps) {
             }}
           />
         )}
+        <View style={styles.detailContainer}>
+          <Button
+            onPress={() => setShowCalendarModal(true)}
+            style={{ paddingBottom: 5, paddingRight: 10 }}>
+            <AntDesign name="calendar" size={45} />
+          </Button>
+          <Text style={styles.detailText}>
+            {selectedDate.getDate() +
+              '.' +
+              (selectedDate.getMonth() + 1) +
+              '.' +
+              selectedDate.getFullYear()}
+          </Text>
+        </View>
+        <View style={styles.cyclicContainer}>
+          <CheckBox
+            title="Cyclic expense"
+            onPress={() => setCyclicExpenseChecked(!cyclicExpenseChecked)}
+            checked={cyclicExpenseChecked}
+            checkedColor="black"
+            size={40}
+            center
+            containerStyle={styles.cyclicCheckbox}
+          />
+          <View>
+            {cyclicExpenseChecked && (
+              <SelectList
+                search={false}
+                setSelected={setSelectedCycleTime}
+                placeholder={selectedCycleTime}
+                data={[
+                  { key: '1', value: 'Weekly' },
+                  { key: '2', value: 'Monthly' },
+                  { key: '3', value: 'Yearly' },
+                ]}
+              />
+            )}
+          </View>
+        </View>
+        <View>
+          <Modal visible={showCalendarModal} style={styles.modalContainer}>
+            <CalendarPicker onDateChange={onDateChange} />
+            <Button onPress={() => setShowCalendarModal(false)} style={{ alignItems: 'center' }}>
+              <MaterialIcons name="cancel" size={buttonSize} color="black" />
+            </Button>
+          </Modal>
+        </View>
       </View>
 
       <View style={styles.buttonContainer}>
@@ -164,5 +224,22 @@ const styles = StyleSheet.create({
   },
   detailText: {
     paddingLeft: 10,
+  },
+  cyclicContainer: {
+    zIndex: 0,
+    flexDirection: 'column',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    borderBottomWidth: 2,
+    borderBottomColor: 'gray',
+  },
+  cyclicCheckbox: {
+    borderColor: '#e6e6e6',
+    backgroundColor: '#e6e6e6',
+  },
+  modalContainer: {
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
