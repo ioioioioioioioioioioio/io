@@ -48,13 +48,6 @@ export default function AddEntryScreen({ navigation }: AddEntryScreenProps) {
       Alert.alert('Invalid amount', 'Please enter a correct amount');
       return;
     }
-    console.log(
-      finalName,
-      foundCategory?.categoryName,
-      selectedCategoryId,
-      selectedCategoryName,
-      selectedCategoryColor
-    );
     if (foundCategory !== undefined) {
       dispatch(addEntry({ name: finalName, amount: numericAmount, category: foundCategory }));
     }
@@ -107,7 +100,6 @@ export default function AddEntryScreen({ navigation }: AddEntryScreenProps) {
         {showCategoryList && (
           <CategoryList
             onCategorySelect={(category) => {
-              console.log(category.categoryName);
               setSelectedCategoryId(category.id);
               setSelectedCategoryName(category.categoryName);
               setSelectedCategoryColor(category.categoryColor);
