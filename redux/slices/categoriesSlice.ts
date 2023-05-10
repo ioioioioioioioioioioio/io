@@ -12,7 +12,6 @@ export type Category = {
 // Define a type for the slice state
 interface CategoriesState {
   categories: Category[];
-  foundCategory: Category;
 }
 
 // Define the initial state using that type
@@ -24,7 +23,6 @@ const initialState: CategoriesState = {
     { id: 4, categoryName: 'Home', categoryColor: '#00aeef' },
     { id: 5, categoryName: 'Toys', categoryColor: '#00c85d' },
   ],
-  foundCategory: { id: 1, categoryName: 'Food', categoryColor: '#ed1c24' },
 };
 
 export const categoriesSlice = createSlice({
@@ -53,24 +51,20 @@ export const categoriesSlice = createSlice({
         Alert.alert('Error', 'Category not found');
       }
     },
-    findCategory: (state, action: PayloadAction<number>) => {
-      const categoryId = action.payload;
-      const foundCategory = state.categories.find((category) => category.id === categoryId);
-      if (foundCategory !== undefined) {
-        state.foundCategory = foundCategory;
-      }
-    },
   },
 });
 
-export const { addCategory, deleteCategory, findCategory } = categoriesSlice.actions;
+export const { addCategory, deleteCategory } = categoriesSlice.actions;
 
 export const selectCategories = (state: RootState) => state.categories.categories;
-export const selectFoundCategory = (state: RootState) => state.categories.foundCategory;
 
 const selectNextCategoryId = (categories: CategoriesState) => {
   const lastCategory = categories.categories.slice(-1)[0];
   return lastCategory.id + 1;
+};
+
+export const findCategory = (state: RootState, categoryId: number) => {
+  return state.categories.categories.find((category) => category.id === categoryId);
 };
 
 export default categoriesSlice.reducer;

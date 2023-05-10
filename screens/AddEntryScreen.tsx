@@ -8,35 +8,44 @@ import { RootStackParamList } from '../App';
 import Button from '../components/Button';
 import CategoryList from '../components/CategoryList';
 import { useAppDispatch } from '../redux/hooks';
-import { findCategory, selectFoundCategory } from '../redux/slices/categoriesSlice';
+import { findCategory } from '../redux/slices/categoriesSlice';
 import { addEntry } from '../redux/slices/entrySlice';
+import { RootState } from '../redux/store';
 
 type AddEntryScreenProps = NativeStackScreenProps<RootStackParamList, 'AddEntryScreen'>;
 
 export default function AddEntryScreen({ navigation }: AddEntryScreenProps) {
   const dispatch = useAppDispatch();
-  const foundCategory = useSelector(selectFoundCategory);
 
   const [isIncome, setIsIncome] = useState(false);
   const [name, setName] = useState('');
   const [amount, setAmount] = useState('');
-  const [selectedCategoryName, setSelectedCategoryName] = useState('');
-  const [selectedCategoryColor, setSelectedCategoryColor] = useState('');
+  const [selectedCategoryName, setSelectedCategoryName] = useState('nm');
+  const [selectedCategoryColor, setSelectedCategoryColor] = useState('cl');
   const [selectedCategoryId, setSelectedCategoryId] = useState(0);
   const [showCategoryList, setShowCategoryList] = useState(false);
 
   const defaultName = isIncome ? 'New income' : 'New expense';
+  const state = useSelector((state: RootState) => state);
 
   const onSubmitEntry = React.useCallback(() => {
     const finalName = name.length === 0 ? defaultName : name;
     const numericAmount = isIncome ? Number(amount) : -Number(amount);
-    dispatch(findCategory(selectedCategoryId));
+    const foundCategory = findCategory(state, selectedCategoryId);
     if (amount === '' || Number.isNaN(numericAmount)) {
       Alert.alert('Invalid amount', 'Please enter a correct amount');
       return;
     }
-
-    dispatch(addEntry({ name: finalName, amount: numericAmount, category: foundCategory }));
+    console.log(
+      finalName,
+      foundCategory?.categoryName,
+      selectedCategoryId,
+      selectedCategoryName,
+      selectedCategoryColor
+    );
+    if (foundCategory !== undefined) {
+      dispatch(addEntry({ name: finalName, amount: numericAmount, category: foundCategory }));
+    }
     navigation.goBack();
   }, [name, amount, isIncome, navigation]);
 
@@ -86,6 +95,7 @@ export default function AddEntryScreen({ navigation }: AddEntryScreenProps) {
         {showCategoryList && (
           <CategoryList
             onCategorySelect={(category) => {
+              console.log(category.categoryName);
               setSelectedCategoryId(category.id);
               setSelectedCategoryName(category.categoryName);
               setSelectedCategoryColor(category.categoryColor);
