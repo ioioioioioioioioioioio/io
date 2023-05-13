@@ -53,7 +53,14 @@ export default function CategoryList({
         renderItem={({ item }) => (
           <TouchableOpacity
             style={[styles.listElemStyle, { backgroundColor: item.categoryColor }, buttonStyle]}
-            onPress={() => onCategorySelect(item)}
+            onPress={() => {
+              const category: Category = {
+                categoryName: item.categoryName,
+                categoryColor: item.categoryColor,
+                id: item.id,
+              };
+              onCategorySelect(category);
+            }}
             onLongPress={() => dispatch(deleteCategory(item.id))}>
             <Text style={{ fontWeight: 'bold' }}>{item.categoryName}</Text>
           </TouchableOpacity>

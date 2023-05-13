@@ -6,12 +6,15 @@ import { StyleSheet, View, TextInput, Alert, Text, TouchableOpacity, Modal } fro
 import CalendarPicker from 'react-native-calendar-picker';
 import { SelectList } from 'react-native-dropdown-select-list';
 import { CheckBox } from 'react-native-elements';
+import { useSelector } from 'react-redux';
 
 import { RootStackParamList } from '../App';
 import Button from '../components/Button';
 import CategoryList from '../components/CategoryList';
 import { useAppDispatch } from '../redux/hooks';
+import { findCategory } from '../redux/slices/categoriesSlice';
 import { addEntry } from '../redux/slices/entrySlice';
+import { RootState } from '../redux/store';
 
 type AddEntryScreenProps = NativeStackScreenProps<RootStackParamList, 'AddEntryScreen'>;
 
@@ -21,8 +24,9 @@ export default function AddEntryScreen({ navigation }: AddEntryScreenProps) {
   const [isIncome, setIsIncome] = useState(false);
   const [name, setName] = useState('');
   const [amount, setAmount] = useState('');
-  const [selectedCategoryName, setSelectedCategoryName] = useState('');
-  const [selectedCategoryColor, setSelectedCategoryColor] = useState('');
+  const [selectedCategoryName, setSelectedCategoryName] = useState('nm');
+  const [selectedCategoryColor, setSelectedCategoryColor] = useState('cl');
+  const [selectedCategoryId, setSelectedCategoryId] = useState(0);
   const [showCategoryList, setShowCategoryList] = useState(false);
   const [showCalendarModal, setShowCalendarModal] = useState(false);
   const [cyclicExpenseChecked, setCyclicExpenseChecked] = useState(false);
@@ -30,6 +34,7 @@ export default function AddEntryScreen({ navigation }: AddEntryScreenProps) {
   const [selectedCycleTime, setSelectedCycleTime] = useState('Timestamp');
 
   const defaultName = isIncome ? 'New income' : 'New expense';
+  const state = useSelector((state: RootState) => state);
 
   const onDateChange = (date: Moment) => {
     setSelectedDate(date.toDate());
@@ -38,13 +43,14 @@ export default function AddEntryScreen({ navigation }: AddEntryScreenProps) {
   const onSubmitEntry = React.useCallback(() => {
     const finalName = name.length === 0 ? defaultName : name;
     const numericAmount = isIncome ? Number(amount) : -Number(amount);
-
+    const foundCategory = findCategory(state, selectedCategoryId);
     if (amount === '' || Number.isNaN(numericAmount)) {
       Alert.alert('Invalid amount', 'Please enter a correct amount');
       return;
     }
-
-    dispatch(addEntry({ name: finalName, amount: numericAmount }));
+    if (foundCategory !== undefined) {
+      dispatch(addEntry({ name: finalName, amount: numericAmount, category: foundCategory }));
+    }
     navigation.goBack();
   }, [name, amount, isIncome, navigation]);
 
@@ -94,6 +100,7 @@ export default function AddEntryScreen({ navigation }: AddEntryScreenProps) {
         {showCategoryList && (
           <CategoryList
             onCategorySelect={(category) => {
+              setSelectedCategoryId(category.id);
               setSelectedCategoryName(category.categoryName);
               setSelectedCategoryColor(category.categoryColor);
               setShowCategoryList(false);

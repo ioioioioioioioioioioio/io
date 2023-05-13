@@ -26,7 +26,7 @@ const initialState: CategoriesState = {
 };
 
 export const categoriesSlice = createSlice({
-  name: 'counter',
+  name: 'categories',
   initialState,
   reducers: {
     addCategory: (state, action: PayloadAction<Omit<Category, 'id'>>) => {
@@ -56,12 +56,15 @@ export const categoriesSlice = createSlice({
 
 export const { addCategory, deleteCategory } = categoriesSlice.actions;
 
-// Other code such as selectors can use the imported `RootState` type
 export const selectCategories = (state: RootState) => state.categories.categories;
 
 const selectNextCategoryId = (categories: CategoriesState) => {
   const lastCategory = categories.categories.slice(-1)[0];
   return lastCategory.id + 1;
+};
+
+export const findCategory = (state: RootState, categoryId: number) => {
+  return state.categories.categories.find((category) => category.id === categoryId);
 };
 
 export default categoriesSlice.reducer;
