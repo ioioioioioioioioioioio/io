@@ -8,6 +8,7 @@ export interface EntryState {
   name: string;
   amount: number;
   category: Category;
+  imageUri: string | null;
   date: Date;
 }
 
