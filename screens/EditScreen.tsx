@@ -1,25 +1,18 @@
+/* eslint-disable no-lone-blocks */
 import { AntDesign, FontAwesome5, MaterialIcons } from '@expo/vector-icons';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { copyAsync, deleteAsync, documentDirectory } from 'expo-file-system';
 import { launchImageLibraryAsync, MediaTypeOptions } from 'expo-image-picker';
 import { Moment } from 'moment';
 import React, { useEffect, useRef, useState } from 'react';
-import {
-  Alert,
-  Image,
-  Modal,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { Alert, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import CalendarPicker from 'react-native-calendar-picker';
 import { useSelector } from 'react-redux';
 
 import { RootStackParamList } from '../App';
 import Button from '../components/Button';
 import CategoryList from '../components/CategoryList';
+import PhotoButton from '../components/PhotoButton';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { findCategory } from '../redux/slices/categoriesSlice';
 import { selectOneEntry, updateEntry } from '../redux/slices/entrySlice';
@@ -189,12 +182,7 @@ export default function EditScreen({
             }}>
             <Text style={styles.detailText}>Add a photo</Text>
           </TouchableOpacity>
-          {selectedImageURI && (
-            <Image
-              source={{ uri: selectedImageURI, width: 75, height: 75 }}
-              style={{ marginLeft: 'auto', marginRight: 10 }}
-            />
-          )}
+          {selectedImageURI && <PhotoButton uri={selectedImageURI} />}
         </View>
       </View>
 
