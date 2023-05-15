@@ -1,18 +1,24 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
+import CategoryLabel from './CategoryLabel';
 import useTheme, { ColorTheme } from '../colors/Colors';
-import { useAppSelector } from '../redux/hooks';
-import type { EntryState } from '../redux/slices/entrySlice';
-import { selectEntries } from '../redux/slices/entrySlice';
-import useTypedNavigation from '../utils/useTypedNavigation';
+import { EntryState } from '../redux/slices/entrySlice';
 
-function Entry({ name, amount }: EntryState) {
+type EntryListProps = {
+  entries: EntryState[];
+  navigation: any;
+};
+
+function Entry({ name, amount, category, onPress }: EntryState & { onPress: () => void }) {
   const theme = useTheme();
   const styles = useStyles(theme);
   return (
-    <TouchableOpacity style={styles.entryContainer}>
-      <Text style={styles.text}>{name} </Text>
+    <TouchableOpacity style={styles.entryContainer} onPress={onPress}>
+      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        <Text style={styles.text}>{name} </Text>
+        <CategoryLabel title={category?.categoryName} color={category?.categoryColor} />
+      </View>
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
         <Text style={styles.text}>{amount}</Text>
         <MaterialCommunityIcons name="arrow-right" color={theme.textPrimary} size={20} />
@@ -21,28 +27,18 @@ function Entry({ name, amount }: EntryState) {
   );
 }
 
-export default function EntryListScreen() {
-  const navigation = useTypedNavigation();
-  const entries1 = useAppSelector((state) => selectEntries(state));
-  // Duplicate entries to test scrolling
-  const entries = [...entries1, ...entries1, ...entries1, ...entries1, ...entries1];
+export default function EntryList({ entries, navigation }: EntryListProps) {
   const theme = useTheme();
   const styles = useStyles(theme);
   return (
-    <View style={styles.mainContainer}>
-      <View style={styles.titleContainer}>
-        <Text style={styles.titleText}>Your recent expenses</Text>
-      </View>
-      <View style={styles.container}>
-        <FlatList
-          data={entries}
-          renderItem={({ item }) => <Entry {...item} />}
-          keyExtractor={(item) => String(item.id * Math.random())}
-        />
-      </View>
-      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('AddEntryScreen')}>
-        <Text style={styles.text}>Add new entry</Text>
-      </TouchableOpacity>
+    <View style={styles.container}>
+      <FlatList
+        data={entries}
+        renderItem={({ item }) => (
+          <Entry {...item} onPress={() => navigation.navigate('EditScreen', { id: item.id })} />
+        )}
+        keyExtractor={(item) => String(item.id * Math.random())}
+      />
     </View>
   );
 }
