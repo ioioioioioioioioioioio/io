@@ -13,6 +13,7 @@ import Button from '../components/Button';
 import CategoryList from '../components/CategoryList';
 import { useAppDispatch } from '../redux/hooks';
 import { findCategory } from '../redux/slices/categoriesSlice';
+import { addCyclicEntry, Cycle } from '../redux/slices/cyclicEntrySlice';
 import { addEntry } from '../redux/slices/entrySlice';
 import { RootState } from '../redux/store';
 
@@ -31,10 +32,12 @@ export default function AddEntryScreen({ navigation }: AddEntryScreenProps) {
   const [showCalendarModal, setShowCalendarModal] = useState(false);
   const [cyclicExpenseChecked, setCyclicExpenseChecked] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [selectedCycleTime, setSelectedCycleTime] = useState('Timestamp');
+  const [selectedCycleTime, setSelectedCycleTime] = useState(Cycle.Undefined);
 
   const defaultName = isIncome ? 'New income' : 'New expense';
-  const state = useSelector((state: RootState) => state);
+  const stateCategory = useSelector((state: RootState) => state);
+  const formattedDate =
+    selectedDate.getDate() + '.' + (selectedDate.getMonth() + 1) + '.' + selectedDate.getFullYear();
 
   const onDateChange = (date: Moment) => {
     setSelectedDate(date.toDate());
@@ -43,16 +46,48 @@ export default function AddEntryScreen({ navigation }: AddEntryScreenProps) {
   const onSubmitEntry = React.useCallback(() => {
     const finalName = name.length === 0 ? defaultName : name;
     const numericAmount = isIncome ? Number(amount) : -Number(amount);
-    const foundCategory = findCategory(state, selectedCategoryId);
+    const foundCategory = findCategory(stateCategory, selectedCategoryId);
     if (amount === '' || Number.isNaN(numericAmount)) {
       Alert.alert('Invalid amount', 'Please enter a correct amount');
       return;
     }
     if (foundCategory !== undefined) {
-      dispatch(addEntry({ name: finalName, amount: numericAmount, category: foundCategory }));
+      if (cyclicExpenseChecked) {
+        if (selectedCycleTime === Cycle.Undefined) {
+          Alert.alert('Error', 'Pick desired cycle time!');
+          return;
+        }
+        dispatch(
+          addCyclicEntry({
+            name: finalName,
+            amount: numericAmount,
+            category: foundCategory,
+            firstOccurence: selectedDate,
+            cycle: selectedCycleTime,
+          })
+        );
+      } else {
+        dispatch(
+          addEntry({
+            name: finalName,
+            amount: numericAmount,
+            category: foundCategory,
+            date: selectedDate,
+          })
+        );
+      }
     }
     navigation.goBack();
-  }, [name, amount, isIncome, navigation]);
+  }, [
+    name,
+    amount,
+    isIncome,
+    navigation,
+    selectedCategoryId,
+    selectedDate,
+    selectedCycleTime,
+    cyclicExpenseChecked,
+  ]);
 
   const amountInput = useRef<TextInput>(null);
 
@@ -113,13 +148,7 @@ export default function AddEntryScreen({ navigation }: AddEntryScreenProps) {
             style={{ paddingBottom: 5, paddingRight: 10 }}>
             <AntDesign name="calendar" size={45} />
           </Button>
-          <Text style={styles.detailText}>
-            {selectedDate.getDate() +
-              '.' +
-              (selectedDate.getMonth() + 1) +
-              '.' +
-              selectedDate.getFullYear()}
-          </Text>
+          <Text style={styles.detailText}>{formattedDate}</Text>
         </View>
         <View style={styles.cyclicContainer}>
           <CheckBox
@@ -138,9 +167,9 @@ export default function AddEntryScreen({ navigation }: AddEntryScreenProps) {
                 setSelected={setSelectedCycleTime}
                 placeholder={selectedCycleTime}
                 data={[
-                  { key: '1', value: 'Weekly' },
-                  { key: '2', value: 'Monthly' },
-                  { key: '3', value: 'Yearly' },
+                  { key: '1', value: Cycle.Week },
+                  { key: '2', value: Cycle.Month },
+                  { key: '3', value: Cycle.Year },
                 ]}
               />
             )}

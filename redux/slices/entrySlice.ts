@@ -8,6 +8,7 @@ export interface EntryState {
   name: string;
   amount: number;
   category: Category;
+  date: Date;
 }
 
 const entryAdapter = createEntityAdapter<EntryState>();
