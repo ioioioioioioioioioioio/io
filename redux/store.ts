@@ -4,12 +4,14 @@ import categoriesReducer from './slices/categoriesSlice';
 import cycleEntriesReducer from './slices/cyclicEntrySlice';
 import entriesReducer from './slices/entrySlice';
 import penguinReducer from './slices/penguinSlice';
+import themingReducer from './slices/themingSlice';
 
 export const store = configureStore({
   reducer: {
     penguin: penguinReducer,
     entries: entriesReducer,
     categories: categoriesReducer,
+    theme: themingReducer,
     cycleEntries: cycleEntriesReducer,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware({ serializableCheck: false }),

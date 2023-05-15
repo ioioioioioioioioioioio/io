@@ -6,6 +6,7 @@ import { Provider } from 'react-redux';
 import { store } from './redux/store';
 import AddEntryScreen from './screens/AddEntryScreen';
 import EditScreen from './screens/EditScreen';
+import EntryListScreen from './screens/EntryListScreen';
 import FeaturesScreen, { Feature } from './screens/FeaturesScreen';
 import InfoScreen from './screens/InfoScreen';
 import PetScreen from './screens/PetScreen';
@@ -15,16 +16,18 @@ export type RootStackParamList = {
   PetScreen: undefined;
   InfoScreen: undefined;
   AddEntryScreen: undefined;
-  EditScreen: undefined;
+  EditScreen: { id: number };
+  EntryListScreen: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const featureList: Feature[] = [
-  { title: 'Pet Screen', screenName: 'PetScreen' },
-  { title: 'Info Screen', screenName: 'InfoScreen' },
-  { title: 'Add Entry', screenName: 'AddEntryScreen' },
-  { title: 'Edit Entry', screenName: 'EditScreen' },
+  { title: 'Pet Screen', screenName: 'PetScreen', props: {} },
+  { title: 'Info Screen', screenName: 'InfoScreen', props: {} },
+  { title: 'Add Entry', screenName: 'AddEntryScreen', props: {} },
+  { title: 'Entry List', screenName: 'EntryListScreen', props: {} },
+  { title: 'Edit Entry', screenName: 'EditScreen', props: { id: 3 } },
 ];
 
 export default function App() {
@@ -39,6 +42,7 @@ export default function App() {
           />
           <Stack.Screen name="InfoScreen" component={InfoScreen} />
           <Stack.Screen name="PetScreen" component={PetScreen} />
+          <Stack.Screen name="EntryListScreen" component={EntryListScreen} />
           <Stack.Screen name="AddEntryScreen" component={AddEntryScreen} />
           <Stack.Screen name="EditScreen" component={EditScreen} />
         </Stack.Navigator>

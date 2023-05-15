@@ -1,8 +1,8 @@
-import { MaterialIcons, AntDesign, FontAwesome5 } from '@expo/vector-icons';
+import { AntDesign, FontAwesome5, MaterialIcons } from '@expo/vector-icons';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Moment } from 'moment';
-import React, { useState, useRef, useEffect } from 'react';
-import { StyleSheet, View, TextInput, Alert, Text, TouchableOpacity, Modal } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { Alert, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import CalendarPicker from 'react-native-calendar-picker';
 import { SelectList } from 'react-native-dropdown-select-list';
 import { CheckBox } from 'react-native-elements';
@@ -11,17 +11,27 @@ import { RootStackParamList } from '../App';
 import Button from '../components/Button';
 import CategoryList from '../components/CategoryList';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
-import { updateEntry, selectOneEntry } from '../redux/slices/entrySlice';
+import { Category } from '../redux/slices/categoriesSlice';
+import { selectOneEntry, updateEntry } from '../redux/slices/entrySlice';
 
 type EditScreenProps = NativeStackScreenProps<RootStackParamList, 'EditScreen'>;
 
-export default function EditScreen({ navigation }: EditScreenProps) {
+export default function EditScreen({
+  route: {
+    params: { id },
+  },
+  navigation,
+}: EditScreenProps) {
   const dispatch = useAppDispatch();
 
   const [isIncome, setIsIncome] = useState(false);
   const [name, setName] = useState('');
   const [amount, setAmount] = useState('');
-  const [selectedCategoryName, setSelectedCategoryName] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState<Category>({
+    id: 0,
+    categoryName: '',
+    categoryColor: '',
+  });
   const [selectedCategoryColor, setSelectedCategoryColor] = useState('');
   const [showCategoryList, setShowCategoryList] = useState(false);
   const [showCalendarModal, setShowCalendarModal] = useState(false);
@@ -29,14 +39,14 @@ export default function EditScreen({ navigation }: EditScreenProps) {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [selectedCycleTime, setSelectedCycleTime] = useState('Timestamp');
 
-  const selectedEntry = useAppSelector((state) => selectOneEntry(3)(state)); // Zmieniony sposób pobierania wybranego wpisu
+  const selectedEntry = useAppSelector((state) => selectOneEntry(id)(state)); // Zmieniony sposób pobierania wybranego wpisu
 
   useEffect(() => {
     if (selectedEntry) {
       setIsIncome(selectedEntry.amount >= 0);
       setName(selectedEntry.name);
       setAmount(Math.abs(selectedEntry.amount).toString());
-      // setSelectedCategoryName(firstEntry.category.name);
+      setSelectedCategory(selectedEntry.category);
       // setSelectedCategoryColor(firstEntry.category.color);
       // setSelectedDate(firstEntry.selectedDate);
       // setCyclicExpenseChecked(firstEntry.cyclicExpense);
@@ -63,6 +73,7 @@ export default function EditScreen({ navigation }: EditScreenProps) {
         id: selectedEntry ? selectedEntry.id : 0,
         name,
         amount: numericAmount,
+        category: selectedCategory,
         // other updated properties
       })
     );
@@ -108,14 +119,14 @@ export default function EditScreen({ navigation }: EditScreenProps) {
             }}
             onPress={() => setShowCategoryList(!showCategoryList)}>
             <Text style={styles.detailText}>
-              {selectedCategoryName === '' ? 'select category' : selectedCategoryName}
+              {selectedCategory ? 'select category' : selectedCategory}
             </Text>
           </TouchableOpacity>
         </View>
         {showCategoryList && (
           <CategoryList
             onCategorySelect={(category) => {
-              setSelectedCategoryName(category.categoryName);
+              setSelectedCategory(category);
               setSelectedCategoryColor(category.categoryColor);
               setShowCategoryList(false);
             }}

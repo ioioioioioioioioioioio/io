@@ -1,5 +1,5 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { StyleSheet, FlatList } from 'react-native';
+import { FlatList, StyleSheet } from 'react-native';
 
 import { RootStackParamList } from '../App';
 import ListElem from '../components/ListElem';
@@ -7,7 +7,8 @@ import ListElem from '../components/ListElem';
 export type Feature = {
   title: string;
   // We should be able to find a better way to do this other than listing all possible screen names
-  screenName: 'PetScreen' | 'InfoScreen' | 'AddEntryScreen' | 'EditScreen';
+  screenName: 'PetScreen' | 'InfoScreen' | 'AddEntryScreen' | 'EditScreen' | 'EntryListScreen';
+  props: any;
 };
 
 type FeaturesScreenProps = NativeStackScreenProps<RootStackParamList, 'FeaturesScreen'>;
@@ -23,7 +24,10 @@ export default function FeaturesScreen({
       style={styles.container}
       data={features}
       renderItem={({ item }) => (
-        <ListElem title={item.title} onPress={() => navigation.navigate(item.screenName)} />
+        <ListElem
+          title={item.title}
+          onPress={() => navigation.navigate(item.screenName, item.props)}
+        />
       )}
     />
   );
