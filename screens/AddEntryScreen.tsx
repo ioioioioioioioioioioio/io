@@ -1,8 +1,19 @@
 import { MaterialIcons, AntDesign, FontAwesome5 } from '@expo/vector-icons';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { copyAsync, deleteAsync, documentDirectory } from 'expo-file-system';
+import { MediaTypeOptions, launchImageLibraryAsync } from 'expo-image-picker';
 import { Moment } from 'moment';
 import React, { useState, useRef } from 'react';
-import { StyleSheet, View, TextInput, Alert, Text, TouchableOpacity, Modal } from 'react-native';
+import {
+  StyleSheet,
+  View,
+  TextInput,
+  Alert,
+  Text,
+  TouchableOpacity,
+  Modal,
+  Image,
+} from 'react-native';
 import CalendarPicker from 'react-native-calendar-picker';
 import { SelectList } from 'react-native-dropdown-select-list';
 import { CheckBox } from 'react-native-elements';
@@ -33,6 +44,7 @@ export default function AddEntryScreen({ navigation }: AddEntryScreenProps) {
   const [cyclicExpenseChecked, setCyclicExpenseChecked] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [selectedCycleTime, setSelectedCycleTime] = useState(Cycle.Undefined);
+  const [selectedImageURI, setSelectedImageURI] = useState<string | null>(null);
 
   const defaultName = isIncome ? 'New income' : 'New expense';
   const stateCategory = useSelector((state: RootState) => state);
@@ -73,6 +85,7 @@ export default function AddEntryScreen({ navigation }: AddEntryScreenProps) {
             amount: numericAmount,
             category: foundCategory,
             date: selectedDate,
+            imageUri: selectedImageURI,
           })
         );
       }
@@ -182,6 +195,35 @@ export default function AddEntryScreen({ navigation }: AddEntryScreenProps) {
               <MaterialIcons name="cancel" size={buttonSize} color="black" />
             </Button>
           </Modal>
+        </View>
+        <View style={styles.detailContainer}>
+          <MaterialIcons name="photo" size={buttonSize} color="black" />
+          <TouchableOpacity
+            onPress={async () => {
+              const result = await launchImageLibraryAsync({
+                allowsEditing: true,
+                allowsMultipleSelection: false,
+                mediaTypes: MediaTypeOptions.Images,
+              });
+              if (!result.canceled) {
+                if (selectedImageURI) {
+                  deleteAsync(selectedImageURI);
+                }
+
+                const uri = `${documentDirectory}entry-${Date.now()}`;
+                const photo = result.assets[0];
+                copyAsync({ from: photo.uri, to: uri });
+                setSelectedImageURI(uri);
+              }
+            }}>
+            <Text style={styles.detailText}>Add a photo</Text>
+          </TouchableOpacity>
+          {selectedImageURI && (
+            <Image
+              source={{ uri: selectedImageURI, width: 75, height: 75 }}
+              style={{ marginLeft: 'auto', marginRight: 10 }}
+            />
+          )}
         </View>
       </View>
 
