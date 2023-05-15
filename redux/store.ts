@@ -1,6 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit';
 
 import categoriesReducer from './slices/categoriesSlice';
+import cycleEntriesReducer from './slices/cyclicEntrySlice';
 import entriesReducer from './slices/entrySlice';
 import penguinReducer from './slices/penguinSlice';
 import themingReducer from './slices/themingSlice';
@@ -11,7 +12,9 @@ export const store = configureStore({
     entries: entriesReducer,
     categories: categoriesReducer,
     theme: themingReducer,
+    cycleEntries: cycleEntriesReducer,
   },
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware({ serializableCheck: false }),
 });
 
 // Infer the `RootState` and `AppDispatch` types from the store itself
