@@ -1,4 +1,4 @@
-import React, { StyleSheet, Text, TouchableOpacity, TextStyle, ViewStyle } from 'react-native';
+import React, { StyleSheet, Text, TextStyle, TouchableOpacity, ViewStyle } from 'react-native';
 
 type ListElemProps = {
   style?: ViewStyle;

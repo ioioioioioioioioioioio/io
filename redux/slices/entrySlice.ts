@@ -1,4 +1,4 @@
-import { PayloadAction, createEntityAdapter, createSlice } from '@reduxjs/toolkit';
+import { createEntityAdapter, createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import { Category } from './categoriesSlice';
 import { RootState } from '../store';
@@ -16,7 +16,29 @@ const entryAdapter = createEntityAdapter<EntryState>();
 
 export const entrySlice = createSlice({
   name: 'entries',
-  initialState: entryAdapter.getInitialState(),
+  initialState: entryAdapter.getInitialState({
+    ids: [1, 2, 3],
+    entities: {
+      1: {
+        id: 1,
+        name: 'Salary',
+        amount: 5000,
+        category: { categoryColor: '#1633e6', categoryName: 'Electronics', id: 3 },
+      },
+      2: {
+        id: 2,
+        name: 'Rent',
+        amount: -1000,
+        category: { categoryColor: '#e616b5', categoryName: 'IO', id: 3 },
+      },
+      3: {
+        id: 3,
+        name: 'Food',
+        amount: -1000,
+        category: { categoryColor: '#27981b', categoryName: 'FOOD', id: 3 },
+      },
+    },
+  }),
   reducers: {
     addEntry: (state, action: PayloadAction<Omit<EntryState, 'id'>>) => {
       const id = Math.max(0, ...state.ids.map(Number)) + 1;
