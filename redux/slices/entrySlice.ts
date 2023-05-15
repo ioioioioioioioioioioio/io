@@ -29,13 +29,21 @@ export const entrySlice = createSlice({
     },
     addEntryWithID: entryAdapter.addOne,
     removeEntry: entryAdapter.removeOne,
+    updateEntry: (state, action: PayloadAction<EntryState>) => {
+      entryAdapter.updateOne(state, {
+        id: action.payload.id,
+        changes: action.payload,
+      });
+    },
   },
 });
 
-export const { addEntry, removeEntry } = entrySlice.actions;
+export const { addEntry, removeEntry, updateEntry } = entrySlice.actions;
 
 const entriesSelectors = entryAdapter.getSelectors<RootState>((state) => state.entries);
 export const selectEntriesDict = (state: RootState) => entriesSelectors.selectEntities(state);
 export const selectEntries = (state: RootState) => entriesSelectors.selectAll(state);
+export const selectOneEntry = (id: number) => (state: RootState) =>
+  entriesSelectors.selectById(state, id);
 
 export default entrySlice.reducer;
