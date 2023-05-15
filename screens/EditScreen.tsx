@@ -64,6 +64,7 @@ export default function EditScreen({
       setSelectedCategoryId(selectedEntry.category.id);
       setSelectedCategoryName(selectedEntry.category.categoryName);
       setSelectedCategoryColor(selectedEntry.category.categoryColor);
+      // eslint-disable-next-line no-lone-blocks
       {
         selectedEntry && selectedEntry.date && setSelectedDate(selectedEntry.date);
       }
