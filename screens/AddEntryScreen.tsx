@@ -4,20 +4,10 @@ import { copyAsync, deleteAsync, documentDirectory } from 'expo-file-system';
 import { MediaTypeOptions, launchImageLibraryAsync } from 'expo-image-picker';
 import { Moment } from 'moment';
 import React, { useState, useRef } from 'react';
-import {
-  StyleSheet,
-  View,
-  TextInput,
-  Alert,
-  Text,
-  TouchableOpacity,
-  Modal,
-  Image,
-} from 'react-native';
+import { StyleSheet, View, TextInput, Alert, Text, TouchableOpacity, Modal } from 'react-native';
 import CalendarPicker from 'react-native-calendar-picker';
 import { SelectList } from 'react-native-dropdown-select-list';
 import { CheckBox } from 'react-native-elements';
-import ImageView from 'react-native-image-viewing';
 import { useSelector } from 'react-redux';
 
 import { RootStackParamList } from '../App';
@@ -220,13 +210,7 @@ export default function AddEntryScreen({ navigation }: AddEntryScreenProps) {
             }}>
             <Text style={styles.detailText}>Add a photo</Text>
           </TouchableOpacity>
-          {selectedImageURI && (
-            // <Image
-            //   source={{ uri: selectedImageURI, width: 75, height: 75 }}
-            //   style={{ marginLeft: 'auto', marginRight: 10 }}
-            // />
-            <PhotoButton uri={selectedImageURI} />
-          )}
+          {selectedImageURI && <PhotoButton uri={selectedImageURI} />}
         </View>
       </View>
 

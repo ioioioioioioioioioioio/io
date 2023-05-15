@@ -5,16 +5,7 @@ import { copyAsync, deleteAsync, documentDirectory } from 'expo-file-system';
 import { launchImageLibraryAsync, MediaTypeOptions } from 'expo-image-picker';
 import { Moment } from 'moment';
 import React, { useEffect, useRef, useState } from 'react';
-import {
-  Alert,
-  Image,
-  Modal,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { Alert, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import CalendarPicker from 'react-native-calendar-picker';
 import { useSelector } from 'react-redux';
 
@@ -191,13 +182,7 @@ export default function EditScreen({
             }}>
             <Text style={styles.detailText}>Add a photo</Text>
           </TouchableOpacity>
-          {selectedImageURI && (
-            // <Image
-            //   source={{ uri: selectedImageURI, width: 75, height: 75 }}
-            //   style={{ marginLeft: 'auto', marginRight: 10 }}
-            // />
-            <PhotoButton uri={selectedImageURI} />
-          )}
+          {selectedImageURI && <PhotoButton uri={selectedImageURI} />}
         </View>
       </View>
 
