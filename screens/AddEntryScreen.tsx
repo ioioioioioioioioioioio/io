@@ -17,11 +17,13 @@ import {
 import CalendarPicker from 'react-native-calendar-picker';
 import { SelectList } from 'react-native-dropdown-select-list';
 import { CheckBox } from 'react-native-elements';
+import ImageView from 'react-native-image-viewing';
 import { useSelector } from 'react-redux';
 
 import { RootStackParamList } from '../App';
 import Button from '../components/Button';
 import CategoryList from '../components/CategoryList';
+import PhotoButton from '../components/PhotoButton';
 import { useAppDispatch } from '../redux/hooks';
 import { findCategory } from '../redux/slices/categoriesSlice';
 import { addCyclicEntry, Cycle } from '../redux/slices/cyclicEntrySlice';
@@ -219,10 +221,11 @@ export default function AddEntryScreen({ navigation }: AddEntryScreenProps) {
             <Text style={styles.detailText}>Add a photo</Text>
           </TouchableOpacity>
           {selectedImageURI && (
-            <Image
-              source={{ uri: selectedImageURI, width: 75, height: 75 }}
-              style={{ marginLeft: 'auto', marginRight: 10 }}
-            />
+            // <Image
+            //   source={{ uri: selectedImageURI, width: 75, height: 75 }}
+            //   style={{ marginLeft: 'auto', marginRight: 10 }}
+            // />
+            <PhotoButton uri={selectedImageURI} />
           )}
         </View>
       </View>

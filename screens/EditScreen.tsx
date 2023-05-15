@@ -1,18 +1,31 @@
+/* eslint-disable no-lone-blocks */
 import { AntDesign, FontAwesome5, MaterialIcons } from '@expo/vector-icons';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { copyAsync, deleteAsync, documentDirectory } from 'expo-file-system';
+import { launchImageLibraryAsync, MediaTypeOptions } from 'expo-image-picker';
 import { Moment } from 'moment';
 import React, { useEffect, useRef, useState } from 'react';
-import { Alert, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import {
+  Alert,
+  Image,
+  Modal,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import CalendarPicker from 'react-native-calendar-picker';
-import { SelectList } from 'react-native-dropdown-select-list';
-import { CheckBox } from 'react-native-elements';
+import { useSelector } from 'react-redux';
 
 import { RootStackParamList } from '../App';
 import Button from '../components/Button';
 import CategoryList from '../components/CategoryList';
+import PhotoButton from '../components/PhotoButton';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
-import { Category } from '../redux/slices/categoriesSlice';
+import { findCategory } from '../redux/slices/categoriesSlice';
 import { selectOneEntry, updateEntry } from '../redux/slices/entrySlice';
+import { RootState } from '../redux/store';
 
 type EditScreenProps = NativeStackScreenProps<RootStackParamList, 'EditScreen'>;
 
@@ -27,30 +40,33 @@ export default function EditScreen({
   const [isIncome, setIsIncome] = useState(false);
   const [name, setName] = useState('');
   const [amount, setAmount] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<Category>({
-    id: 0,
-    categoryName: '',
-    categoryColor: '',
-  });
+  const [selectedCategoryId, setSelectedCategoryId] = useState(0);
+  const [selectedCategoryName, setSelectedCategoryName] = useState('');
   const [selectedCategoryColor, setSelectedCategoryColor] = useState('');
   const [showCategoryList, setShowCategoryList] = useState(false);
   const [showCalendarModal, setShowCalendarModal] = useState(false);
-  const [cyclicExpenseChecked, setCyclicExpenseChecked] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [selectedCycleTime, setSelectedCycleTime] = useState('Timestamp');
+  const [selectedImageURI, setSelectedImageURI] = useState<string | null>(null);
 
-  const selectedEntry = useAppSelector((state) => selectOneEntry(id)(state)); // Zmieniony sposób pobierania wybranego wpisu
+  const defaultName = isIncome ? 'New income' : 'New expense';
+  const stateCategory = useSelector((state: RootState) => state);
+  const formattedDate =
+    selectedDate.getDate() + '.' + (selectedDate.getMonth() + 1) + '.' + selectedDate.getFullYear();
+
+  const selectedEntry = useAppSelector((state) => selectOneEntry(id)(state));
 
   useEffect(() => {
     if (selectedEntry) {
       setIsIncome(selectedEntry.amount >= 0);
       setName(selectedEntry.name);
       setAmount(Math.abs(selectedEntry.amount).toString());
-      setSelectedCategory(selectedEntry.category);
-      // setSelectedCategoryColor(firstEntry.category.color);
-      // setSelectedDate(firstEntry.selectedDate);
-      // setCyclicExpenseChecked(firstEntry.cyclicExpense);
-      // setSelectedCycleTime(firstEntry.selectedCycleTime);
+      setSelectedImageURI(selectedEntry.imageUri);
+      setSelectedCategoryId(selectedEntry.category.id);
+      setSelectedCategoryName(selectedEntry.category.categoryName);
+      setSelectedCategoryColor(selectedEntry.category.categoryColor);
+      {
+        selectedEntry && selectedEntry.date && setSelectedDate(selectedEntry.date);
+      }
     } else {
       navigation.navigate('AddEntryScreen');
     }
@@ -62,23 +78,26 @@ export default function EditScreen({
 
   const onSubmitEntry = React.useCallback(() => {
     const numericAmount = isIncome ? Number(amount) : -Number(amount);
+    const foundCategory = findCategory(stateCategory, selectedCategoryId);
 
     if (amount === '' || Number.isNaN(numericAmount)) {
       Alert.alert('Invalid amount', 'Please enter a correct amount');
       return;
     }
-
-    dispatch(
-      updateEntry({
-        id: selectedEntry ? selectedEntry.id : 0,
-        name,
-        amount: numericAmount,
-        category: selectedCategory,
-        // other updated properties
-      })
-    );
+    if (foundCategory) {
+      dispatch(
+        updateEntry({
+          id: selectedEntry ? selectedEntry.id : 0,
+          name,
+          amount: numericAmount,
+          category: foundCategory,
+          date: selectedDate,
+          imageUri: selectedImageURI,
+        })
+      );
+    }
     navigation.goBack();
-  }, [name, amount, isIncome, navigation]);
+  }, [name, amount, isIncome, navigation, selectedCategoryId, selectedDate, selectedImageURI]);
 
   const amountInput = useRef<TextInput>(null);
 
@@ -88,7 +107,7 @@ export default function EditScreen({
         <TextInput
           style={styles.nameInput}
           autoFocus
-          placeholder={name}
+          placeholder={defaultName}
           onChangeText={setName}
           value={name}
           onSubmitEditing={() => amountInput?.current?.focus()}
@@ -98,7 +117,7 @@ export default function EditScreen({
             styles.amountInput,
             isIncome ? styles.incomeAmountInput : styles.expenseAmountInput,
           ]}
-          placeholder={amount}
+          placeholder="0"
           keyboardType="numeric"
           onChangeText={(amount) => setAmount(amount.replace('-', ''))}
           value={amount}
@@ -119,14 +138,15 @@ export default function EditScreen({
             }}
             onPress={() => setShowCategoryList(!showCategoryList)}>
             <Text style={styles.detailText}>
-              {selectedCategory ? 'select category' : selectedCategory}
+              {selectedCategoryName === '' ? 'select category' : selectedCategoryName}
             </Text>
           </TouchableOpacity>
         </View>
         {showCategoryList && (
           <CategoryList
             onCategorySelect={(category) => {
-              setSelectedCategory(category);
+              setSelectedCategoryId(category.id);
+              setSelectedCategoryName(category.categoryName);
               setSelectedCategoryColor(category.categoryColor);
               setShowCategoryList(false);
             }}
@@ -138,38 +158,7 @@ export default function EditScreen({
             style={{ paddingBottom: 5, paddingRight: 10 }}>
             <AntDesign name="calendar" size={45} />
           </Button>
-          <Text style={styles.detailText}>
-            {selectedDate.getDate() +
-              '.' +
-              (selectedDate.getMonth() + 1) +
-              '.' +
-              selectedDate.getFullYear()}
-          </Text>
-        </View>
-        <View style={styles.cyclicContainer}>
-          <CheckBox
-            title="Cyclic expense"
-            onPress={() => setCyclicExpenseChecked(!cyclicExpenseChecked)}
-            checked={cyclicExpenseChecked}
-            checkedColor="black"
-            size={40}
-            center
-            containerStyle={styles.cyclicCheckbox}
-          />
-          <View>
-            {cyclicExpenseChecked && (
-              <SelectList
-                search={false}
-                setSelected={setSelectedCycleTime}
-                placeholder={selectedCycleTime}
-                data={[
-                  { key: '1', value: 'Weekly' },
-                  { key: '2', value: 'Monthly' },
-                  { key: '3', value: 'Yearly' },
-                ]}
-              />
-            )}
-          </View>
+          <Text style={styles.detailText}>{formattedDate}</Text>
         </View>
         <View>
           <Modal visible={showCalendarModal} style={styles.modalContainer}>
@@ -178,6 +167,36 @@ export default function EditScreen({
               <MaterialIcons name="cancel" size={buttonSize} color="black" />
             </Button>
           </Modal>
+        </View>
+        <View style={styles.detailContainer}>
+          <MaterialIcons name="photo" size={buttonSize} color="black" />
+          <TouchableOpacity
+            onPress={async () => {
+              const result = await launchImageLibraryAsync({
+                allowsEditing: true,
+                allowsMultipleSelection: false,
+                mediaTypes: MediaTypeOptions.Images,
+              });
+              if (!result.canceled) {
+                if (selectedImageURI) {
+                  deleteAsync(selectedImageURI);
+                }
+
+                const uri = `${documentDirectory}entry-${Date.now()}`;
+                const photo = result.assets[0];
+                copyAsync({ from: photo.uri, to: uri });
+                setSelectedImageURI(uri);
+              }
+            }}>
+            <Text style={styles.detailText}>Add a photo</Text>
+          </TouchableOpacity>
+          {selectedImageURI && (
+            // <Image
+            //   source={{ uri: selectedImageURI, width: 75, height: 75 }}
+            //   style={{ marginLeft: 'auto', marginRight: 10 }}
+            // />
+            <PhotoButton uri={selectedImageURI} />
+          )}
         </View>
       </View>
 
@@ -197,7 +216,6 @@ export default function EditScreen({
 }
 
 const buttonSize = 50;
-
 const styles = StyleSheet.create({
   container: {
     paddingTop: 20,
