@@ -1,11 +1,13 @@
 import { PayloadAction, createEntityAdapter, createSlice } from '@reduxjs/toolkit';
 
+import { Category } from './categoriesSlice';
 import { RootState } from '../store';
 
 export interface EntryState {
   id: number;
   name: string;
   amount: number;
+  category: Category;
 }
 
 const entryAdapter = createEntityAdapter<EntryState>();
