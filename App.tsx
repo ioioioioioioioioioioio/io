@@ -1,14 +1,14 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import React from 'react';
 import { Provider } from 'react-redux';
 
 import { store } from './redux/store';
 import AddEntryScreen from './screens/AddEntryScreen';
+import EditScreen from './screens/EditScreen';
 import FeaturesScreen, { Feature } from './screens/FeaturesScreen';
 import InfoScreen from './screens/InfoScreen';
 import PetScreen from './screens/PetScreen';
-import EditScreen from "./screens/EditScreen";
-import React from "react";
 
 export type RootStackParamList = {
   FeaturesScreen: { features: Feature[] };
