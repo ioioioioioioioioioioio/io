@@ -28,7 +28,7 @@ export default function AddEntryScreen({ navigation }: AddEntryScreenProps) {
   const [isIncome, setIsIncome] = useState(false);
   const [name, setName] = useState('');
   const [amount, setAmount] = useState('');
-  const [selectedCategoryName, setSelectedCategoryName] = useState('nm');
+  const [selectedCategoryName, setSelectedCategoryName] = useState('Select category!');
   const [selectedCategoryColor, setSelectedCategoryColor] = useState('cl');
   const [selectedCategoryId, setSelectedCategoryId] = useState(0);
   const [showCategoryList, setShowCategoryList] = useState(false);
@@ -66,7 +66,8 @@ export default function AddEntryScreen({ navigation }: AddEntryScreenProps) {
             name: finalName,
             amount: numericAmount,
             category: foundCategory,
-            firstOccurence: selectedDate,
+            imageUri: selectedImageURI,
+            date: selectedDate,
             cycle: selectedCycleTime,
           })
         );
@@ -155,36 +156,11 @@ export default function AddEntryScreen({ navigation }: AddEntryScreenProps) {
           </Button>
           <Text style={styles.detailText}>{formattedDate}</Text>
         </View>
-        <View style={styles.cyclicContainer}>
-          <CheckBox
-            title="Cyclic expense"
-            onPress={() => setCyclicExpenseChecked(!cyclicExpenseChecked)}
-            checked={cyclicExpenseChecked}
-            checkedColor="black"
-            size={40}
-            center
-            containerStyle={styles.cyclicCheckbox}
-          />
-          <View>
-            {cyclicExpenseChecked && (
-              <SelectList
-                search={false}
-                setSelected={setSelectedCycleTime}
-                placeholder={selectedCycleTime}
-                data={[
-                  { key: '1', value: Cycle.Week },
-                  { key: '2', value: Cycle.Month },
-                  { key: '3', value: Cycle.Year },
-                ]}
-              />
-            )}
-          </View>
-        </View>
         <View>
           <Modal visible={showCalendarModal} style={styles.modalContainer}>
             <CalendarPicker onDateChange={onDateChange} />
             <Button onPress={() => setShowCalendarModal(false)} style={{ alignItems: 'center' }}>
-              <MaterialIcons name="cancel" size={buttonSize} color="black" />
+              <MaterialIcons name="check-circle" size={buttonSize} color="black" />
             </Button>
           </Modal>
         </View>
@@ -211,6 +187,31 @@ export default function AddEntryScreen({ navigation }: AddEntryScreenProps) {
             <Text style={styles.detailText}>Add a photo</Text>
           </TouchableOpacity>
           {selectedImageURI && <PhotoButton uri={selectedImageURI} />}
+        </View>
+        <View style={styles.cyclicContainer}>
+          <CheckBox
+            title="Cyclic expense"
+            onPress={() => setCyclicExpenseChecked(!cyclicExpenseChecked)}
+            checked={cyclicExpenseChecked}
+            checkedColor="black"
+            size={40}
+            center
+            containerStyle={styles.cyclicCheckbox}
+          />
+          <View>
+            {cyclicExpenseChecked && (
+              <SelectList
+                search={false}
+                setSelected={setSelectedCycleTime}
+                placeholder={selectedCycleTime}
+                data={[
+                  { key: '1', value: Cycle.Week },
+                  { key: '2', value: Cycle.Month },
+                  { key: '3', value: Cycle.Year },
+                ]}
+              />
+            )}
+          </View>
         </View>
       </View>
 
