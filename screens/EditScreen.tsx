@@ -37,6 +37,7 @@ export default function EditScreen({
   const [showCalendarModal, setShowCalendarModal] = useState(false);
   const [cyclicExpenseChecked, setCyclicExpenseChecked] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedImageURI] = useState<string | null>(null);
   const [selectedCycleTime, setSelectedCycleTime] = useState('Timestamp');
 
   const selectedEntry = useAppSelector((state) => selectOneEntry(id)(state)); // Zmieniony sposób pobierania wybranego wpisu
@@ -74,6 +75,8 @@ export default function EditScreen({
         name,
         amount: numericAmount,
         category: selectedCategory,
+        imageUri: selectedImageURI,
+        date: selectedDate,
         // other updated properties
       })
     );
