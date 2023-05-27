@@ -4,6 +4,7 @@ import React from 'react';
 import { Provider } from 'react-redux';
 
 import { store } from './redux/store';
+import AddAccountScreen from './screens/AddAccountScreen';
 import AddEntryScreen from './screens/AddEntryScreen';
 import EditScreen from './screens/EditScreen';
 import EntryListScreen from './screens/EntryListScreen';
@@ -16,6 +17,7 @@ export type RootStackParamList = {
   PetScreen: undefined;
   InfoScreen: undefined;
   AddEntryScreen: undefined;
+  AddAccountScreen: undefined;
   EditScreen: { id: number };
   EntryListScreen: undefined;
 };
@@ -26,6 +28,7 @@ const featureList: Feature[] = [
   { title: 'Pet Screen', screenName: 'PetScreen', props: {} },
   { title: 'Info Screen', screenName: 'InfoScreen', props: {} },
   { title: 'Add Entry', screenName: 'AddEntryScreen', props: {} },
+  { title: 'Add Account', screenName: 'AddAccountScreen', props: {} },
   { title: 'Entry List', screenName: 'EntryListScreen', props: {} },
   { title: 'Edit Entry', screenName: 'EditScreen', props: { id: 3 } },
 ];
@@ -45,6 +48,7 @@ export default function App() {
           <Stack.Screen name="EntryListScreen" component={EntryListScreen} />
           <Stack.Screen name="AddEntryScreen" component={AddEntryScreen} />
           <Stack.Screen name="EditScreen" component={EditScreen} />
+          <Stack.Screen name="AddAccountScreen" component={AddAccountScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>
