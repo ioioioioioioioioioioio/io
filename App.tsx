@@ -9,6 +9,7 @@ import AddEntryScreen from './screens/AddEntryScreen';
 import EditScreen from './screens/EditScreen';
 import EntryListScreen from './screens/EntryListScreen';
 import FeaturesScreen, { Feature } from './screens/FeaturesScreen';
+import FilteredEntryListScreen from './screens/FilteredEntryListScreen';
 import InfoScreen from './screens/InfoScreen';
 import PetScreen from './screens/PetScreen';
 
@@ -20,6 +21,7 @@ export type RootStackParamList = {
   AddAccountScreen: undefined;
   EditScreen: { id: number };
   EntryListScreen: undefined;
+  FilteredEntryListScreen: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -30,6 +32,7 @@ const featureList: Feature[] = [
   { title: 'Add Entry', screenName: 'AddEntryScreen', props: {} },
   { title: 'Add Account', screenName: 'AddAccountScreen', props: {} },
   { title: 'Entry List', screenName: 'EntryListScreen', props: {} },
+  { title: 'Filtered Entry List', screenName: 'FilteredEntryListScreen', props: {} },
   { title: 'Edit Entry', screenName: 'EditScreen', props: { id: 3 } },
 ];
 
@@ -46,6 +49,7 @@ export default function App() {
           <Stack.Screen name="InfoScreen" component={InfoScreen} />
           <Stack.Screen name="PetScreen" component={PetScreen} />
           <Stack.Screen name="EntryListScreen" component={EntryListScreen} />
+          <Stack.Screen name="FilteredEntryListScreen" component={FilteredEntryListScreen} />
           <Stack.Screen name="AddEntryScreen" component={AddEntryScreen} />
           <Stack.Screen name="EditScreen" component={EditScreen} />
           <Stack.Screen name="AddAccountScreen" component={AddAccountScreen} />
