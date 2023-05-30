@@ -13,6 +13,7 @@ export type Feature = {
     | 'AddEntryScreen'
     | 'EditScreen'
     | 'EntryListScreen'
+    | 'EditCyclicScreen'
     | 'AddAccountScreen';
   props: any;
 };
