@@ -6,12 +6,12 @@ import { Provider } from 'react-redux';
 import { store } from './redux/store';
 import AddAccountScreen from './screens/AddAccountScreen';
 import AddEntryScreen from './screens/AddEntryScreen';
+import EditCyclicScreen from './screens/EditCyclicScreen';
 import EditScreen from './screens/EditScreen';
 import EntryListScreen from './screens/EntryListScreen';
 import FeaturesScreen, { Feature } from './screens/FeaturesScreen';
 import InfoScreen from './screens/InfoScreen';
 import PetScreen from './screens/PetScreen';
-import EditCyclicScreen from './screens/EditCyclicScreen';
 
 export type RootStackParamList = {
   FeaturesScreen: { features: Feature[] };
