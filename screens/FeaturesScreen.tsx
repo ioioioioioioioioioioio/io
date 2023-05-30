@@ -14,7 +14,8 @@ export type Feature = {
     | 'EditScreen'
     | 'EntryListScreen'
     | 'EditCyclicScreen'
-    | 'AddAccountScreen';
+    | 'AddAccountScreen'
+    | 'FilteredEntryListScreen';
   props: any;
 };
 
