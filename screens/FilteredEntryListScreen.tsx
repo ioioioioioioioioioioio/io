@@ -35,8 +35,10 @@ export default function FilteredEntryListScreen() {
       </View>
       {!isCyclicList && <EntryList entries={expenses} navigation={navigation} />}
       {isCyclicList && <CycleEntryList entries={cyclicExpenses} navigation={navigation} />}
-      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('AddEntryScreen')}>
-        <Text style={styles.text}>Add new entry</Text>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => navigation.navigate('FilteredEntryListScreen')}>
+        <Text style={styles.text}>Update Filter...</Text>
       </TouchableOpacity>
     </View>
   );
