@@ -10,6 +10,7 @@ export interface EntryState {
   category: Category;
   imageUri: string | null;
   date: Date;
+  done: boolean;
 }
 
 const entryAdapter = createEntityAdapter<EntryState>();
@@ -24,18 +25,21 @@ export const entrySlice = createSlice({
         name: 'Salary',
         amount: 5000,
         category: { categoryColor: '#1633e6', categoryName: 'Electronics', id: 3 },
+        done: true,
       },
       2: {
         id: 2,
         name: 'Rent',
         amount: -1000,
         category: { categoryColor: '#e616b5', categoryName: 'IO', id: 3 },
+        done: false,
       },
       3: {
         id: 3,
         name: 'Food',
         amount: -1000,
         category: { categoryColor: '#27981b', categoryName: 'FOOD', id: 3 },
+        done: true,
       },
     },
   }),

@@ -40,6 +40,7 @@ export default function EditCyclicScreen({
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [selectedCycleTime, setSelectedCycleTime] = useState(Cycle.Undefined);
   const [selectedImageURI, setSelectedImageURI] = useState<string | null>(null);
+  const [isDone, setIsDone] = useState(false);
 
   const defaultName = isIncome ? 'New income' : 'New expense';
   const stateCategory = useSelector((state: RootState) => state);
@@ -58,6 +59,7 @@ export default function EditCyclicScreen({
       setSelectedCategoryName(selectedEntry.category.categoryName);
       setSelectedCategoryColor(selectedEntry.category.categoryColor);
       setSelectedCycleTime(selectedEntry.cycle);
+      setIsDone(selectedEntry.done);
       // eslint-disable-next-line no-lone-blocks
       {
         selectedEntry && selectedEntry.date && setSelectedDate(selectedEntry.date);
@@ -89,6 +91,7 @@ export default function EditCyclicScreen({
           date: selectedDate,
           imageUri: selectedImageURI,
           cycle: selectedCycleTime,
+          done: isDone,
         })
       );
     }

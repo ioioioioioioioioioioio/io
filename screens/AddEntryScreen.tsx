@@ -68,6 +68,7 @@ export default function AddEntryScreen({ navigation }: AddEntryScreenProps) {
             category: foundCategory,
             imageUri: selectedImageURI,
             date: selectedDate,
+            done: false,
             cycle: Cycle[selectedCycleTime],
           })
         );
@@ -79,6 +80,7 @@ export default function AddEntryScreen({ navigation }: AddEntryScreenProps) {
             category: foundCategory,
             date: selectedDate,
             imageUri: selectedImageURI,
+            done: true,
           })
         );
       }
