@@ -38,6 +38,7 @@ export default function EditScreen({
   const [showCalendarModal, setShowCalendarModal] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [selectedImageURI, setSelectedImageURI] = useState<string | null>(null);
+  const [isDone] = useState(false);
 
   const defaultName = isIncome ? 'New income' : 'New expense';
   const stateCategory = useSelector((state: RootState) => state);
@@ -85,6 +86,7 @@ export default function EditScreen({
           category: foundCategory,
           date: selectedDate,
           imageUri: selectedImageURI,
+          done: isDone,
         })
       );
     }

@@ -1,21 +1,34 @@
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { AntDesign, MaterialCommunityIcons } from '@expo/vector-icons';
 import React, { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import CategoryLabel from './CategoryLabel';
 import useTheme, { ColorTheme } from '../colors/Colors';
-import { EntryState } from '../redux/slices/entrySlice';
+import { useAppDispatch } from '../redux/hooks';
+import { Category } from '../redux/slices/categoriesSlice';
+import { EntryState, updateEntry } from '../redux/slices/entrySlice';
 
 type EntryListProps = {
   entries: EntryState[];
   navigation: any;
 };
 
-function Entry({ name, amount, category, onPress }: EntryState & { onPress: () => void }) {
+function Entry({
+  name,
+  amount,
+  category,
+  done,
+  onPress,
+  onLongPress,
+}: EntryState & { onPress: () => void } & { onLongPress: () => void }) {
   const theme = useTheme();
   const styles = useStyles(theme);
+
   return (
-    <TouchableOpacity style={styles.entryContainer} onPress={onPress}>
+    <TouchableOpacity style={styles.entryContainer} onPress={onPress} onLongPress={onLongPress}>
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        {!done && (
+          <AntDesign name="hourglass" color={theme.primary} style={{ paddingRight: 2 }} size={20} />
+        )}
         <Text style={styles.text}>{name} </Text>
         <CategoryLabel title={category?.categoryName} color={category?.categoryColor} />
       </View>
@@ -30,12 +43,48 @@ function Entry({ name, amount, category, onPress }: EntryState & { onPress: () =
 export default function EntryList({ entries, navigation }: EntryListProps) {
   const theme = useTheme();
   const styles = useStyles(theme);
+  const dispatch = useAppDispatch();
+  const handleLongPress = (
+    id: number,
+    name: string,
+    amount: number,
+    category: Category,
+    done: boolean,
+    date: Date,
+    imageUri: string | null
+  ) => {
+    dispatch(
+      updateEntry({
+        id,
+        name,
+        amount,
+        category,
+        done: !done,
+        date,
+        imageUri,
+      })
+    );
+  };
   return (
     <View style={styles.container}>
       <FlatList
         data={entries}
         renderItem={({ item }) => (
-          <Entry {...item} onPress={() => navigation.navigate('EditScreen', { id: item.id })} />
+          <Entry
+            {...item}
+            onLongPress={() =>
+              handleLongPress(
+                item.id,
+                item.name,
+                item.amount,
+                item.category,
+                item.done,
+                item.date,
+                item.imageUri
+              )
+            }
+            onPress={() => navigation.navigate('EditScreen', { id: item.id })}
+          />
         )}
         keyExtractor={(item) => String(item.id * Math.random())}
       />

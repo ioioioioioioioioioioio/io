@@ -1,6 +1,5 @@
 import { PayloadAction, createEntityAdapter, createSlice } from '@reduxjs/toolkit';
 
-import { Category } from './categoriesSlice';
 import { EntryState } from './entrySlice';
 import { RootState } from '../store';
 
@@ -13,12 +12,6 @@ export enum Cycle {
 }
 
 export interface CycleEntryState extends EntryState {
-  id: number;
-  name: string;
-  amount: number;
-  category: Category;
-  imageUri: string | null;
-  date: Date;
   cycle: Cycle;
 }
 
