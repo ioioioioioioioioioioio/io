@@ -59,6 +59,9 @@ export const { addCategory, deleteCategory } = categoriesSlice.actions;
 export const selectCategories = (state: RootState) => state.categories.categories;
 
 const selectNextCategoryId = (categories: CategoriesState) => {
+  if (categories.categories.length === 0) {
+    return 1;
+  }
   const lastCategory = categories.categories.slice(-1)[0];
   return lastCategory.id + 1;
 };

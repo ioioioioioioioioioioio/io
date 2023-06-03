@@ -1,5 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit';
 
+import accountsReducer from './slices/accountSlice';
 import categoriesReducer from './slices/categoriesSlice';
 import cycleEntriesReducer from './slices/cyclicEntrySlice';
 import entriesReducer from './slices/entrySlice';
@@ -11,6 +12,7 @@ export const store = configureStore({
     penguin: penguinReducer,
     entries: entriesReducer,
     categories: categoriesReducer,
+    accounts: accountsReducer,
     theme: themingReducer,
     cycleEntries: cycleEntriesReducer,
   },

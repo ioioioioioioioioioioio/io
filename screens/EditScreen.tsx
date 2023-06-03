@@ -5,7 +5,18 @@ import { copyAsync, deleteAsync, documentDirectory } from 'expo-file-system';
 import { launchImageLibraryAsync, MediaTypeOptions } from 'expo-image-picker';
 import { Moment } from 'moment';
 import React, { useEffect, useRef, useState } from 'react';
-import { Alert, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import {
+  Alert,
+  FlatList,
+  Keyboard,
+  Modal,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  View,
+} from 'react-native';
 import CalendarPicker from 'react-native-calendar-picker';
 import { useSelector } from 'react-redux';
 
@@ -14,6 +25,7 @@ import Button from '../components/Button';
 import CategoryList from '../components/CategoryList';
 import PhotoButton from '../components/PhotoButton';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
+import { findAccount } from '../redux/slices/accountSlice';
 import { findCategory } from '../redux/slices/categoriesSlice';
 import { selectOneEntry, updateEntry } from '../redux/slices/entrySlice';
 import { RootState } from '../redux/store';
@@ -39,9 +51,12 @@ export default function EditScreen({
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [selectedImageURI, setSelectedImageURI] = useState<string | null>(null);
   const [isDone] = useState(false);
+  const [selectedAccountId, setSelectedAccountId] = useState(0);
+  const [selectedAccountName, setSelectedAccountName] = useState('');
+  const [showAccountList, setShowAccountList] = useState(false);
 
   const defaultName = isIncome ? 'New income' : 'New expense';
-  const stateCategory = useSelector((state: RootState) => state);
+  const state = useSelector((state: RootState) => state);
   const formattedDate =
     selectedDate.getDate() + '.' + (selectedDate.getMonth() + 1) + '.' + selectedDate.getFullYear();
 
@@ -56,6 +71,8 @@ export default function EditScreen({
       setSelectedCategoryId(selectedEntry.category.id);
       setSelectedCategoryName(selectedEntry.category.categoryName);
       setSelectedCategoryColor(selectedEntry.category.categoryColor);
+      setSelectedAccountName(selectedEntry.account.name);
+      setSelectedAccountId(selectedEntry.account.id);
       // eslint-disable-next-line no-lone-blocks
       {
         selectedEntry && selectedEntry.date && setSelectedDate(selectedEntry.date);
@@ -71,13 +88,14 @@ export default function EditScreen({
 
   const onSubmitEntry = React.useCallback(() => {
     const numericAmount = isIncome ? Number(amount) : -Number(amount);
-    const foundCategory = findCategory(stateCategory, selectedCategoryId);
+    const foundCategory = findCategory(state, selectedCategoryId);
+    const foundAccount = findAccount(state, selectedAccountId);
 
     if (amount === '' || Number.isNaN(numericAmount)) {
       Alert.alert('Invalid amount', 'Please enter a correct amount');
       return;
     }
-    if (foundCategory) {
+    if (foundCategory && foundAccount) {
       dispatch(
         updateEntry({
           id: selectedEntry ? selectedEntry.id : 0,
@@ -87,119 +105,157 @@ export default function EditScreen({
           date: selectedDate,
           imageUri: selectedImageURI,
           done: isDone,
+          account: foundAccount,
         })
       );
     }
     navigation.goBack();
-  }, [name, amount, isIncome, navigation, selectedCategoryId, selectedDate, selectedImageURI]);
+  }, [
+    name,
+    amount,
+    isIncome,
+    navigation,
+    selectedCategoryId,
+    selectedDate,
+    selectedImageURI,
+    selectedAccountId,
+  ]);
 
   const amountInput = useRef<TextInput>(null);
+  const accountsList = useAppSelector((state) => state.accounts.accounts);
 
   return (
-    <View style={styles.container}>
-      <View style={styles.inputContainer}>
-        <TextInput
-          style={styles.nameInput}
-          autoFocus
-          placeholder={defaultName}
-          onChangeText={setName}
-          value={name}
-          onSubmitEditing={() => amountInput?.current?.focus()}
-        />
-        <TextInput
-          style={[
-            styles.amountInput,
-            isIncome ? styles.incomeAmountInput : styles.expenseAmountInput,
-          ]}
-          placeholder="0"
-          keyboardType="numeric"
-          onChangeText={(amount) => setAmount(amount.replace('-', ''))}
-          value={amount}
-          ref={amountInput}
-          onSubmitEditing={onSubmitEntry}
-        />
-      </View>
-
-      <View style={styles.detailsContainer}>
-        <Text>Details</Text>
-        <View style={styles.detailContainer}>
-          <MaterialIcons name="folder" size={buttonSize} color="black" />
-          <TouchableOpacity
-            style={{
-              backgroundColor: selectedCategoryColor,
-              padding: 10,
-              borderRadius: 5,
-            }}
-            onPress={() => setShowCategoryList(!showCategoryList)}>
-            <Text style={styles.detailText}>
-              {selectedCategoryName === '' ? 'select category' : selectedCategoryName}
-            </Text>
-          </TouchableOpacity>
-        </View>
-        {showCategoryList && (
-          <CategoryList
-            onCategorySelect={(category) => {
-              setSelectedCategoryId(category.id);
-              setSelectedCategoryName(category.categoryName);
-              setSelectedCategoryColor(category.categoryColor);
-              setShowCategoryList(false);
-            }}
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+      <View style={styles.container}>
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={styles.nameInput}
+            autoFocus
+            placeholder={defaultName}
+            onChangeText={setName}
+            value={name}
+            onSubmitEditing={() => amountInput?.current?.focus()}
           />
-        )}
-        <View style={styles.detailContainer}>
-          <Button
-            onPress={() => setShowCalendarModal(true)}
-            style={{ paddingBottom: 5, paddingRight: 10 }}>
-            <AntDesign name="calendar" size={45} />
-          </Button>
-          <Text style={styles.detailText}>{formattedDate}</Text>
+          <TextInput
+            style={[
+              styles.amountInput,
+              isIncome ? styles.incomeAmountInput : styles.expenseAmountInput,
+            ]}
+            placeholder="0"
+            keyboardType="numeric"
+            onChangeText={(amount) => setAmount(amount.replace('-', ''))}
+            value={amount}
+            ref={amountInput}
+            onSubmitEditing={onSubmitEntry}
+          />
         </View>
-        <View>
-          <Modal visible={showCalendarModal} style={styles.modalContainer}>
-            <CalendarPicker onDateChange={onDateChange} />
-            <Button onPress={() => setShowCalendarModal(false)} style={{ alignItems: 'center' }}>
-              <MaterialIcons name="cancel" size={buttonSize} color="black" />
+
+        <View style={styles.detailsContainer}>
+          <Text>Details</Text>
+          <View style={styles.detailContainer}>
+            <AntDesign name="wallet" size={buttonSize} color="black" />
+            <TouchableOpacity onPress={() => setShowAccountList(!showAccountList)}>
+              <Text style={styles.detailText}>{selectedAccountName}</Text>
+            </TouchableOpacity>
+          </View>
+          {showAccountList && (
+            <View>
+              <FlatList
+                style={styles.accountListStyle}
+                data={accountsList}
+                renderItem={({ item }) => (
+                  <TouchableOpacity
+                    style={styles.accountListElemStyle}
+                    onPress={() => {
+                      setSelectedAccountName(item.name);
+                      setSelectedAccountId(item.id);
+                      setShowAccountList(!showAccountList);
+                    }}>
+                    <Text style={{ fontWeight: 'bold' }}>{item.name}</Text>
+                  </TouchableOpacity>
+                )}
+              />
+            </View>
+          )}
+          <View style={styles.detailContainer}>
+            <MaterialIcons name="folder" size={buttonSize} color="black" />
+            <TouchableOpacity
+              style={{
+                backgroundColor: selectedCategoryColor,
+                padding: 10,
+                borderRadius: 5,
+              }}
+              onPress={() => setShowCategoryList(!showCategoryList)}>
+              <Text style={styles.detailText}>
+                {selectedCategoryName === '' ? 'select category' : selectedCategoryName}
+              </Text>
+            </TouchableOpacity>
+          </View>
+          {showCategoryList && (
+            <CategoryList
+              onCategorySelect={(category) => {
+                setSelectedCategoryId(category.id);
+                setSelectedCategoryName(category.categoryName);
+                setSelectedCategoryColor(category.categoryColor);
+                setShowCategoryList(false);
+              }}
+            />
+          )}
+          <View style={styles.detailContainer}>
+            <Button
+              onPress={() => setShowCalendarModal(true)}
+              style={{ paddingBottom: 5, paddingRight: 10 }}>
+              <AntDesign name="calendar" size={45} />
             </Button>
-          </Modal>
-        </View>
-        <View style={styles.detailContainer}>
-          <MaterialIcons name="photo" size={buttonSize} color="black" />
-          <TouchableOpacity
-            onPress={async () => {
-              const result = await launchImageLibraryAsync({
-                allowsEditing: true,
-                allowsMultipleSelection: false,
-                mediaTypes: MediaTypeOptions.Images,
-              });
-              if (!result.canceled) {
-                if (selectedImageURI) {
-                  deleteAsync(selectedImageURI);
+            <Text style={styles.detailText}>{formattedDate}</Text>
+          </View>
+          <View>
+            <Modal visible={showCalendarModal} style={styles.modalContainer}>
+              <CalendarPicker onDateChange={onDateChange} />
+              <Button onPress={() => setShowCalendarModal(false)} style={{ alignItems: 'center' }}>
+                <MaterialIcons name="check-circle" size={buttonSize} color="black" />
+              </Button>
+            </Modal>
+          </View>
+          <View style={styles.detailContainer}>
+            <MaterialIcons name="photo" size={buttonSize} color="black" />
+            <TouchableOpacity
+              onPress={async () => {
+                const result = await launchImageLibraryAsync({
+                  allowsEditing: true,
+                  allowsMultipleSelection: false,
+                  mediaTypes: MediaTypeOptions.Images,
+                });
+                if (!result.canceled) {
+                  if (selectedImageURI) {
+                    deleteAsync(selectedImageURI);
+                  }
+
+                  const uri = `${documentDirectory}entry-${Date.now()}`;
+                  const photo = result.assets[0];
+                  copyAsync({ from: photo.uri, to: uri });
+                  setSelectedImageURI(uri);
                 }
+              }}>
+              <Text style={styles.detailText}>Add a photo</Text>
+            </TouchableOpacity>
+            {selectedImageURI && <PhotoButton uri={selectedImageURI} />}
+          </View>
+        </View>
 
-                const uri = `${documentDirectory}entry-${Date.now()}`;
-                const photo = result.assets[0];
-                copyAsync({ from: photo.uri, to: uri });
-                setSelectedImageURI(uri);
-              }
-            }}>
-            <Text style={styles.detailText}>Add a photo</Text>
-          </TouchableOpacity>
-          {selectedImageURI && <PhotoButton uri={selectedImageURI} />}
+        <View style={styles.buttonContainer}>
+          <Button onPress={() => navigation.goBack()}>
+            <MaterialIcons name="cancel" size={buttonSize} color="black" />
+          </Button>
+          <Button onPress={() => setIsIncome((v) => !v)}>
+            <AntDesign name="swap" size={buttonSize} color="black" />
+          </Button>
+          <Button onPress={onSubmitEntry}>
+            <FontAwesome5 name="check" size={buttonSize} color="black" />
+          </Button>
         </View>
       </View>
-
-      <View style={styles.buttonContainer}>
-        <Button onPress={() => navigation.goBack()}>
-          <MaterialIcons name="cancel" size={buttonSize} color="black" />
-        </Button>
-        <Button onPress={() => setIsIncome((v) => !v)}>
-          <AntDesign name="swap" size={buttonSize} color="black" />
-        </Button>
-        <Button onPress={onSubmitEntry}>
-          <FontAwesome5 name="check" size={buttonSize} color="black" />
-        </Button>
-      </View>
-    </View>
+    </TouchableWithoutFeedback>
   );
 }
 
@@ -274,5 +330,13 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  accountListStyle: {
+    height: 100,
+    marginHorizontal: 50,
+  },
+  accountListElemStyle: {
+    paddingVertical: 5,
+    borderBottomWidth: StyleSheet.hairlineWidth,
   },
 });
