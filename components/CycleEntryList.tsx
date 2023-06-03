@@ -42,6 +42,7 @@ function Entry({
         <CategoryLabel title={category?.categoryName} color={category?.categoryColor} />
       </View>
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        <Text style={styles.cycleText}>{cycle.toUpperCase()}</Text>
         <Text style={styles.text}>{amount}</Text>
         <MaterialCommunityIcons name="arrow-right" color={theme.textPrimary} size={20} />
       </View>
@@ -119,7 +120,6 @@ const useStyles = (theme: ColorTheme) =>
     entryContainer: {
       flexDirection: 'row',
       justifyContent: 'space-between',
-      paddingHorizontal: 20,
       padding: 10,
       borderColor: 'black',
       backgroundColor: theme.backgroundPrimary,
@@ -127,5 +127,10 @@ const useStyles = (theme: ColorTheme) =>
     },
     text: {
       color: theme.textPrimary,
+    },
+    cycleText: {
+      color: theme.primary,
+      fontSize: 18,
+      paddingHorizontal: 5,
     },
   });
