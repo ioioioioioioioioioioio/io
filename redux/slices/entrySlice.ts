@@ -1,5 +1,6 @@
 import { createEntityAdapter, createSlice, PayloadAction } from '@reduxjs/toolkit';
 
+import { Account } from './accountSlice';
 import { Category } from './categoriesSlice';
 import { RootState } from '../store';
 
@@ -7,6 +8,7 @@ export interface EntryState {
   id: number;
   name: string;
   amount: number;
+  account: Account;
   category: Category;
   imageUri: string | null;
   date: Date;
@@ -26,6 +28,7 @@ export const entrySlice = createSlice({
         amount: 5000,
         category: { categoryColor: '#1633e6', categoryName: 'Electronics', id: 3 },
         done: true,
+        account: { name: 'test account', amount: 100, id: 1 },
       },
       2: {
         id: 2,
@@ -33,6 +36,7 @@ export const entrySlice = createSlice({
         amount: -1000,
         category: { categoryColor: '#e616b5', categoryName: 'IO', id: 3 },
         done: false,
+        account: { name: 'test account', amount: 100, id: 1 },
       },
       3: {
         id: 3,
@@ -40,6 +44,7 @@ export const entrySlice = createSlice({
         amount: -1000,
         category: { categoryColor: '#27981b', categoryName: 'FOOD', id: 3 },
         done: true,
+        account: { name: 'test account', amount: 100, id: 1 },
       },
     },
   }),

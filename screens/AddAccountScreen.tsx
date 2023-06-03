@@ -2,20 +2,40 @@ import { MaterialIcons, FontAwesome5 } from '@expo/vector-icons';
 import { Picker } from '@react-native-picker/picker';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React, { useState, useRef } from 'react';
-import { StyleSheet, View, TextInput, Text } from 'react-native';
+import { StyleSheet, View, TextInput, Text, Alert } from 'react-native';
 
 import { RootStackParamList } from '../App';
 import Button from '../components/Button';
+import { useAppDispatch } from '../redux/hooks';
+import { addAccount } from '../redux/slices/accountSlice';
 
 type AddAccountScreenProps = NativeStackScreenProps<RootStackParamList, 'AddAccountScreen'>;
 
 export default function AddEntryScreen({ navigation }: AddAccountScreenProps) {
+  const dispatch = useAppDispatch();
+
   const [name, setName] = useState('');
   const [amount, setAmount] = useState('');
   const [currency, setCurrency] = useState('PLN'); // Domyślna waluta (można zmienić na inną)
 
   const defaultName = 'New account';
   const amountInput = useRef<TextInput>(null);
+
+  const onSubmitEntry = React.useCallback(() => {
+    const finalName = name.length === 0 ? defaultName : name;
+    const numericAmount = Number(amount);
+    if (amount === '' || Number.isNaN(numericAmount)) {
+      Alert.alert('Invalid amount', 'Please enter a correct amount');
+      return;
+    }
+    dispatch(
+      addAccount({
+        name: finalName,
+        amount: numericAmount,
+      })
+    );
+    navigation.goBack();
+  }, [name, amount]);
 
   return (
     <View style={styles.container}>
@@ -56,7 +76,7 @@ export default function AddEntryScreen({ navigation }: AddAccountScreenProps) {
         <Button onPress={() => navigation.goBack()}>
           <MaterialIcons name="cancel" size={buttonSize} color="black" />
         </Button>
-        <Button>
+        <Button onPress={onSubmitEntry}>
           <FontAwesome5 name="check" size={buttonSize} color="black" />
         </Button>
       </View>

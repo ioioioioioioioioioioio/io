@@ -5,7 +5,16 @@ import { copyAsync, deleteAsync, documentDirectory } from 'expo-file-system';
 import { launchImageLibraryAsync, MediaTypeOptions } from 'expo-image-picker';
 import { Moment } from 'moment';
 import React, { useEffect, useRef, useState } from 'react';
-import { Alert, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import {
+  Alert,
+  FlatList,
+  Modal,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import CalendarPicker from 'react-native-calendar-picker';
 import { SelectList } from 'react-native-dropdown-select-list';
 import { useSelector } from 'react-redux';
@@ -15,6 +24,7 @@ import Button from '../components/Button';
 import CategoryList from '../components/CategoryList';
 import PhotoButton from '../components/PhotoButton';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
+import { findAccount } from '../redux/slices/accountSlice';
 import { findCategory } from '../redux/slices/categoriesSlice';
 import { Cycle, selectOneEntry, updateEntry } from '../redux/slices/cyclicEntrySlice';
 import { RootState } from '../redux/store';
@@ -41,9 +51,12 @@ export default function EditCyclicScreen({
   const [selectedCycleTime, setSelectedCycleTime] = useState(Cycle.Undefined);
   const [selectedImageURI, setSelectedImageURI] = useState<string | null>(null);
   const [isDone, setIsDone] = useState(false);
+  const [selectedAccountId, setSelectedAccountId] = useState(0);
+  const [selectedAccountName, setSelectedAccountName] = useState('');
+  const [showAccountList, setShowAccountList] = useState(false);
 
   const defaultName = isIncome ? 'New income' : 'New expense';
-  const stateCategory = useSelector((state: RootState) => state);
+  const state = useSelector((state: RootState) => state);
   const formattedDate =
     selectedDate.getDate() + '.' + (selectedDate.getMonth() + 1) + '.' + selectedDate.getFullYear();
 
@@ -60,6 +73,8 @@ export default function EditCyclicScreen({
       setSelectedCategoryColor(selectedEntry.category.categoryColor);
       setSelectedCycleTime(selectedEntry.cycle);
       setIsDone(selectedEntry.done);
+      setSelectedAccountName(selectedEntry.account.name);
+      setSelectedAccountId(selectedEntry.account.id);
       // eslint-disable-next-line no-lone-blocks
       {
         selectedEntry && selectedEntry.date && setSelectedDate(selectedEntry.date);
@@ -75,13 +90,14 @@ export default function EditCyclicScreen({
 
   const onSubmitEntry = React.useCallback(() => {
     const numericAmount = isIncome ? Number(amount) : -Number(amount);
-    const foundCategory = findCategory(stateCategory, selectedCategoryId);
+    const foundCategory = findCategory(state, selectedCategoryId);
+    const foundAccount = findAccount(state, selectedAccountId);
 
     if (amount === '' || Number.isNaN(numericAmount)) {
       Alert.alert('Invalid amount', 'Please enter a correct amount');
       return;
     }
-    if (foundCategory) {
+    if (foundCategory && foundAccount) {
       dispatch(
         updateEntry({
           id: selectedEntry ? selectedEntry.id : 0,
@@ -92,6 +108,7 @@ export default function EditCyclicScreen({
           imageUri: selectedImageURI,
           cycle: selectedCycleTime,
           done: isDone,
+          account: foundAccount,
         })
       );
     }
@@ -105,9 +122,11 @@ export default function EditCyclicScreen({
     selectedDate,
     selectedImageURI,
     selectedCycleTime,
+    selectedAccountId,
   ]);
 
   const amountInput = useRef<TextInput>(null);
+  const accountsList = useAppSelector((state) => state.accounts.accounts);
 
   return (
     <View style={styles.container}>
@@ -136,6 +155,31 @@ export default function EditCyclicScreen({
 
       <View style={styles.detailsContainer}>
         <Text>Details</Text>
+        <View style={styles.detailContainer}>
+          <AntDesign name="wallet" size={buttonSize} color="black" />
+          <TouchableOpacity onPress={() => setShowAccountList(!showAccountList)}>
+            <Text style={styles.detailText}>{selectedAccountName}</Text>
+          </TouchableOpacity>
+        </View>
+        {showAccountList && (
+          <View>
+            <FlatList
+              style={styles.accountListStyle}
+              data={accountsList}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  style={styles.accountListElemStyle}
+                  onPress={() => {
+                    setSelectedAccountName(item.name);
+                    setSelectedAccountId(item.id);
+                    setShowAccountList(!showAccountList);
+                  }}>
+                  <Text style={{ fontWeight: 'bold' }}>{item.name}</Text>
+                </TouchableOpacity>
+              )}
+            />
+          </View>
+        )}
         <View style={styles.detailContainer}>
           <MaterialIcons name="folder" size={buttonSize} color="black" />
           <TouchableOpacity
@@ -304,5 +348,13 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  accountListStyle: {
+    height: 100,
+    marginHorizontal: 50,
+  },
+  accountListElemStyle: {
+    paddingVertical: 5,
+    borderBottomWidth: StyleSheet.hairlineWidth,
   },
 });
