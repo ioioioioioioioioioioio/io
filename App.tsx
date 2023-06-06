@@ -4,6 +4,7 @@ import React from 'react';
 import { Provider } from 'react-redux';
 
 import { store } from './redux/store';
+import AccountListScreen from './screens/AccountListScreen';
 import AddAccountScreen from './screens/AddAccountScreen';
 import AddEntryScreen from './screens/AddEntryScreen';
 import EditCyclicScreen from './screens/EditCyclicScreen';
@@ -13,7 +14,6 @@ import FeaturesScreen, { Feature } from './screens/FeaturesScreen';
 import FilteredEntryListScreen from './screens/FilteredEntryListScreen';
 import InfoScreen from './screens/InfoScreen';
 import PetScreen from './screens/PetScreen';
-import AccountListScreen from "./screens/AccountListScreen";
 
 export type RootStackParamList = {
   FeaturesScreen: { features: Feature[] };
