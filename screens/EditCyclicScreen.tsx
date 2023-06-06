@@ -54,6 +54,7 @@ export default function EditCyclicScreen({
   const [selectedAccountId, setSelectedAccountId] = useState(0);
   const [selectedAccountName, setSelectedAccountName] = useState('');
   const [showAccountList, setShowAccountList] = useState(false);
+  const [selectedAccountCurrency, setSelectedAccountCurrency] = useState('');
 
   const defaultName = isIncome ? 'New income' : 'New expense';
   const state = useSelector((state: RootState) => state);
@@ -75,6 +76,7 @@ export default function EditCyclicScreen({
       setIsDone(selectedEntry.done);
       setSelectedAccountName(selectedEntry.account.name);
       setSelectedAccountId(selectedEntry.account.id);
+      setSelectedAccountCurrency(selectedEntry.account.currency);
       // eslint-disable-next-line no-lone-blocks
       {
         selectedEntry && selectedEntry.date && setSelectedDate(selectedEntry.date);
@@ -151,6 +153,7 @@ export default function EditCyclicScreen({
           ref={amountInput}
           onSubmitEditing={onSubmitEntry}
         />
+        <Text style={styles.currency}>{selectedAccountCurrency}</Text>
       </View>
 
       <View style={styles.detailsContainer}>
@@ -172,6 +175,7 @@ export default function EditCyclicScreen({
                   onPress={() => {
                     setSelectedAccountName(item.name);
                     setSelectedAccountId(item.id);
+                    setSelectedAccountCurrency(item.currency);
                     setShowAccountList(!showAccountList);
                   }}>
                   <Text style={{ fontWeight: 'bold' }}>{item.name}</Text>
@@ -356,5 +360,11 @@ const styles = StyleSheet.create({
   accountListElemStyle: {
     paddingVertical: 5,
     borderBottomWidth: StyleSheet.hairlineWidth,
+  },
+  currency: {
+    fontSize: 20,
+    alignSelf: 'flex-end',
+    marginLeft: 3,
+    marginRight: 3,
   },
 });
