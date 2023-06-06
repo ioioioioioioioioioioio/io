@@ -10,7 +10,7 @@ export type Account = {
   currency: string;
 };
 
-interface AccountsState {
+export interface AccountsState {
   accounts: Account[];
 }
 
