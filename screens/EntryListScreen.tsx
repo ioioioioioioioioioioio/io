@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import React, { StyleSheet, Text, TouchableOpacity, View, Switch } from 'react-native';
 
 import useTheme, { ColorTheme } from '../colors/Colors';
@@ -20,7 +20,6 @@ export default function EntryListScreen() {
   };
   const theme = useTheme();
   const styles = useStyles(theme);
-
   return (
     <View style={styles.mainContainer}>
       <View style={styles.titleContainer}>
