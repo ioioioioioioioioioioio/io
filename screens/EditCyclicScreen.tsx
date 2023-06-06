@@ -206,7 +206,7 @@ export default function EditCyclicScreen({
         )}
         <View style={styles.detailContainer}>
           <AntDesign name="calendar" size={45} />
-          <TouchableOpacity onPress={() => setShowCalendarModal(true)} >
+          <TouchableOpacity onPress={() => setShowCalendarModal(true)}>
             <Text style={styles.detailText}>{formattedDate}</Text>
           </TouchableOpacity>
         </View>
