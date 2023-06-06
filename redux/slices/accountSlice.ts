@@ -7,6 +7,7 @@ export type Account = {
   id: number;
   name: string;
   amount: number;
+  currency: string;
 };
 
 interface AccountsState {
@@ -14,7 +15,7 @@ interface AccountsState {
 }
 
 const initialState: AccountsState = {
-  accounts: [{ name: 'test account', amount: 100, id: 1 }],
+  accounts: [{ name: 'test account', amount: 100, id: 1, currency: 'PLN' }],
 };
 
 export const accountsSlice = createSlice({

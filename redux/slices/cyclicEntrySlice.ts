@@ -28,6 +28,7 @@ export const cyclicEntrySlice = createSlice({
         amount: -100,
         category: { categoryName: 'Home', categoryColor: '#00aeef', id: 4 },
         cycle: Cycle.Month,
+        account: { currency: 'PLN', name: 'test account', amount: 100, id: 1 },
       },
       2: {
         id: 2,
@@ -35,6 +36,7 @@ export const cyclicEntrySlice = createSlice({
         amount: -150,
         category: { categoryName: 'Home', categoryColor: '#00aeef', id: 4 },
         cycle: Cycle.Month,
+        account: { currency: 'PLN', name: 'test account', amount: 100, id: 1 },
       },
     },
   }),
