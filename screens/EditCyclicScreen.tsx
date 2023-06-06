@@ -8,16 +8,15 @@ import React, { useEffect, useRef, useState } from 'react';
 import {
   Alert,
   FlatList,
-  Keyboard,
   Modal,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
-  TouchableWithoutFeedback,
   View,
 } from 'react-native';
 import CalendarPicker from 'react-native-calendar-picker';
+import { SelectList } from 'react-native-dropdown-select-list';
 import { useSelector } from 'react-redux';
 
 import { RootStackParamList } from '../App';
@@ -27,17 +26,17 @@ import PhotoButton from '../components/PhotoButton';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { findAccount } from '../redux/slices/accountSlice';
 import { findCategory } from '../redux/slices/categoriesSlice';
-import { selectOneEntry, updateEntry } from '../redux/slices/entrySlice';
+import { Cycle, selectOneEntry, updateEntry } from '../redux/slices/cyclicEntrySlice';
 import { RootState } from '../redux/store';
 
-type EditScreenProps = NativeStackScreenProps<RootStackParamList, 'EditScreen'>;
+type EditCyclicScreenProps = NativeStackScreenProps<RootStackParamList, 'EditCyclicScreen'>;
 
-export default function EditScreen({
+export default function EditCyclicScreen({
   route: {
     params: { id },
   },
   navigation,
-}: EditScreenProps) {
+}: EditCyclicScreenProps) {
   const dispatch = useAppDispatch();
 
   const [isIncome, setIsIncome] = useState(false);
@@ -49,8 +48,9 @@ export default function EditScreen({
   const [showCategoryList, setShowCategoryList] = useState(false);
   const [showCalendarModal, setShowCalendarModal] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedCycleTime, setSelectedCycleTime] = useState(Cycle.Undefined);
   const [selectedImageURI, setSelectedImageURI] = useState<string | null>(null);
-  const [isDone] = useState(false);
+  const [isDone, setIsDone] = useState(false);
   const [selectedAccountId, setSelectedAccountId] = useState(0);
   const [selectedAccountName, setSelectedAccountName] = useState('');
   const [showAccountList, setShowAccountList] = useState(false);
@@ -71,6 +71,8 @@ export default function EditScreen({
       setSelectedCategoryId(selectedEntry.category.id);
       setSelectedCategoryName(selectedEntry.category.categoryName);
       setSelectedCategoryColor(selectedEntry.category.categoryColor);
+      setSelectedCycleTime(selectedEntry.cycle);
+      setIsDone(selectedEntry.done);
       setSelectedAccountName(selectedEntry.account.name);
       setSelectedAccountId(selectedEntry.account.id);
       // eslint-disable-next-line no-lone-blocks
@@ -104,6 +106,7 @@ export default function EditScreen({
           category: foundCategory,
           date: selectedDate,
           imageUri: selectedImageURI,
+          cycle: selectedCycleTime,
           done: isDone,
           account: foundAccount,
         })
@@ -118,6 +121,7 @@ export default function EditScreen({
     selectedCategoryId,
     selectedDate,
     selectedImageURI,
+    selectedCycleTime,
     selectedAccountId,
   ]);
 
@@ -125,137 +129,148 @@ export default function EditScreen({
   const accountsList = useAppSelector((state) => state.accounts.accounts);
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-      <View style={styles.container}>
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={styles.nameInput}
-            autoFocus
-            placeholder={defaultName}
-            onChangeText={setName}
-            value={name}
-            onSubmitEditing={() => amountInput?.current?.focus()}
-          />
-          <TextInput
-            style={[
-              styles.amountInput,
-              isIncome ? styles.incomeAmountInput : styles.expenseAmountInput,
-            ]}
-            placeholder="0"
-            keyboardType="numeric"
-            onChangeText={(amount) => setAmount(amount.replace('-', ''))}
-            value={amount}
-            ref={amountInput}
-            onSubmitEditing={onSubmitEntry}
-          />
-        </View>
+    <View style={styles.container}>
+      <View style={styles.inputContainer}>
+        <TextInput
+          style={styles.nameInput}
+          autoFocus
+          placeholder={defaultName}
+          onChangeText={setName}
+          value={name}
+          onSubmitEditing={() => amountInput?.current?.focus()}
+        />
+        <TextInput
+          style={[
+            styles.amountInput,
+            isIncome ? styles.incomeAmountInput : styles.expenseAmountInput,
+          ]}
+          placeholder="0"
+          keyboardType="numeric"
+          onChangeText={(amount) => setAmount(amount.replace('-', ''))}
+          value={amount}
+          ref={amountInput}
+          onSubmitEditing={onSubmitEntry}
+        />
+      </View>
 
-        <View style={styles.detailsContainer}>
-          <Text>Details</Text>
-          <View style={styles.detailContainer}>
-            <AntDesign name="wallet" size={buttonSize} color="black" />
-            <TouchableOpacity onPress={() => setShowAccountList(!showAccountList)}>
-              <Text style={styles.detailText}>{selectedAccountName}</Text>
-            </TouchableOpacity>
-          </View>
-          {showAccountList && (
-            <View>
-              <FlatList
-                style={styles.accountListStyle}
-                data={accountsList}
-                renderItem={({ item }) => (
-                  <TouchableOpacity
-                    style={styles.accountListElemStyle}
-                    onPress={() => {
-                      setSelectedAccountName(item.name);
-                      setSelectedAccountId(item.id);
-                      setShowAccountList(!showAccountList);
-                    }}>
-                    <Text style={{ fontWeight: 'bold' }}>{item.name}</Text>
-                  </TouchableOpacity>
-                )}
-              />
-            </View>
-          )}
-          <View style={styles.detailContainer}>
-            <MaterialIcons name="folder" size={buttonSize} color="black" />
-            <TouchableOpacity
-              style={{
-                backgroundColor: selectedCategoryColor,
-                padding: 10,
-                borderRadius: 5,
-              }}
-              onPress={() => setShowCategoryList(!showCategoryList)}>
-              <Text style={styles.detailText}>
-                {selectedCategoryName === '' ? 'select category' : selectedCategoryName}
-              </Text>
-            </TouchableOpacity>
-          </View>
-          {showCategoryList && (
-            <CategoryList
-              onCategorySelect={(category) => {
-                setSelectedCategoryId(category.id);
-                setSelectedCategoryName(category.categoryName);
-                setSelectedCategoryColor(category.categoryColor);
-                setShowCategoryList(false);
-              }}
-            />
-          )}
-          <View style={styles.detailContainer}>
-            <Button
-              onPress={() => setShowCalendarModal(true)}
-              style={{ paddingBottom: 5, paddingRight: 10 }}>
-              <AntDesign name="calendar" size={45} />
-            </Button>
-            <Text style={styles.detailText}>{formattedDate}</Text>
-          </View>
+      <View style={styles.detailsContainer}>
+        <Text>Details</Text>
+        <View style={styles.detailContainer}>
+          <AntDesign name="wallet" size={buttonSize} color="black" />
+          <TouchableOpacity onPress={() => setShowAccountList(!showAccountList)}>
+            <Text style={styles.detailText}>{selectedAccountName}</Text>
+          </TouchableOpacity>
+        </View>
+        {showAccountList && (
           <View>
-            <Modal visible={showCalendarModal} style={styles.modalContainer}>
-              <CalendarPicker onDateChange={onDateChange} />
-              <Button onPress={() => setShowCalendarModal(false)} style={{ alignItems: 'center' }}>
-                <MaterialIcons name="check-circle" size={buttonSize} color="black" />
-              </Button>
-            </Modal>
+            <FlatList
+              style={styles.accountListStyle}
+              data={accountsList}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  style={styles.accountListElemStyle}
+                  onPress={() => {
+                    setSelectedAccountName(item.name);
+                    setSelectedAccountId(item.id);
+                    setShowAccountList(!showAccountList);
+                  }}>
+                  <Text style={{ fontWeight: 'bold' }}>{item.name}</Text>
+                </TouchableOpacity>
+              )}
+            />
           </View>
-          <View style={styles.detailContainer}>
-            <MaterialIcons name="photo" size={buttonSize} color="black" />
-            <TouchableOpacity
-              onPress={async () => {
-                const result = await launchImageLibraryAsync({
-                  allowsEditing: true,
-                  allowsMultipleSelection: false,
-                  mediaTypes: MediaTypeOptions.Images,
-                });
-                if (!result.canceled) {
-                  if (selectedImageURI) {
-                    deleteAsync(selectedImageURI);
-                  }
-
-                  const uri = `${documentDirectory}entry-${Date.now()}`;
-                  const photo = result.assets[0];
-                  copyAsync({ from: photo.uri, to: uri });
-                  setSelectedImageURI(uri);
-                }
-              }}>
-              <Text style={styles.detailText}>Add a photo</Text>
-            </TouchableOpacity>
-            {selectedImageURI && <PhotoButton uri={selectedImageURI} />}
-          </View>
+        )}
+        <View style={styles.detailContainer}>
+          <MaterialIcons name="folder" size={buttonSize} color="black" />
+          <TouchableOpacity
+            style={{
+              backgroundColor: selectedCategoryColor,
+              padding: 10,
+              borderRadius: 5,
+            }}
+            onPress={() => setShowCategoryList(!showCategoryList)}>
+            <Text style={styles.detailText}>
+              {selectedCategoryName === '' ? 'select category' : selectedCategoryName}
+            </Text>
+          </TouchableOpacity>
         </View>
+        {showCategoryList && (
+          <CategoryList
+            onCategorySelect={(category) => {
+              setSelectedCategoryId(category.id);
+              setSelectedCategoryName(category.categoryName);
+              setSelectedCategoryColor(category.categoryColor);
+              setShowCategoryList(false);
+            }}
+          />
+        )}
+        <View style={styles.detailContainer}>
+          <Button
+            onPress={() => setShowCalendarModal(true)}
+            style={{ paddingBottom: 5, paddingRight: 10 }}>
+            <AntDesign name="calendar" size={45} />
+          </Button>
+          <Text style={styles.detailText}>{formattedDate}</Text>
+        </View>
+        <View>
+          <Modal visible={showCalendarModal} style={styles.modalContainer}>
+            <CalendarPicker onDateChange={onDateChange} />
+            <Button onPress={() => setShowCalendarModal(false)} style={{ alignItems: 'center' }}>
+              <MaterialIcons name="cancel" size={buttonSize} color="black" />
+            </Button>
+          </Modal>
+        </View>
+        <View style={styles.detailContainer}>
+          <MaterialIcons name="photo" size={buttonSize} color="black" />
+          <TouchableOpacity
+            onPress={async () => {
+              const result = await launchImageLibraryAsync({
+                allowsEditing: true,
+                allowsMultipleSelection: false,
+                mediaTypes: MediaTypeOptions.Images,
+              });
+              if (!result.canceled) {
+                if (selectedImageURI) {
+                  deleteAsync(selectedImageURI);
+                }
 
-        <View style={styles.buttonContainer}>
-          <Button onPress={() => navigation.goBack()}>
-            <MaterialIcons name="cancel" size={buttonSize} color="black" />
-          </Button>
-          <Button onPress={() => setIsIncome((v) => !v)}>
-            <AntDesign name="swap" size={buttonSize} color="black" />
-          </Button>
-          <Button onPress={onSubmitEntry}>
-            <FontAwesome5 name="check" size={buttonSize} color="black" />
-          </Button>
+                const uri = `${documentDirectory}entry-${Date.now()}`;
+                const photo = result.assets[0];
+                copyAsync({ from: photo.uri, to: uri });
+                setSelectedImageURI(uri);
+              }
+            }}>
+            <Text style={styles.detailText}>Add a photo</Text>
+          </TouchableOpacity>
+          {selectedImageURI && <PhotoButton uri={selectedImageURI} />}
+        </View>
+        <View style={styles.cycleContainer}>
+          <SelectList
+            search={false}
+            setSelected={setSelectedCycleTime}
+            placeholder={selectedCycleTime}
+            data={[
+              { key: Cycle.Day, value: Cycle.Day },
+              { key: Cycle.Week, value: Cycle.Week },
+              { key: Cycle.Month, value: Cycle.Month },
+              { key: Cycle.Year, value: Cycle.Year },
+            ]}
+          />
         </View>
       </View>
-    </TouchableWithoutFeedback>
+
+      <View style={styles.buttonContainer}>
+        <Button onPress={() => navigation.goBack()}>
+          <MaterialIcons name="cancel" size={buttonSize} color="black" />
+        </Button>
+        <Button onPress={() => setIsIncome((v) => !v)}>
+          <AntDesign name="swap" size={buttonSize} color="black" />
+        </Button>
+        <Button onPress={onSubmitEntry}>
+          <FontAwesome5 name="check" size={buttonSize} color="black" />
+        </Button>
+      </View>
+    </View>
   );
 }
 
@@ -303,6 +318,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'flex-start',
     alignItems: 'center',
+    borderBottomWidth: 1,
+  },
+  cycleContainer: {
     borderBottomWidth: 1,
   },
   detailsContainer: {

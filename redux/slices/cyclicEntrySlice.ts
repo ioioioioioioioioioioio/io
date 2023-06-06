@@ -1,23 +1,17 @@
 import { PayloadAction, createEntityAdapter, createSlice } from '@reduxjs/toolkit';
 
-import { Category } from './categoriesSlice';
 import { EntryState } from './entrySlice';
 import { RootState } from '../store';
 
 export enum Cycle {
   Undefined = 'Timestamp',
+  Day = 'Day',
   Week = 'Week',
   Month = 'Month',
   Year = 'Year',
 }
 
 export interface CycleEntryState extends EntryState {
-  id: number;
-  name: string;
-  amount: number;
-  category: Category;
-  imageUri: string | null;
-  date: Date;
   cycle: Cycle;
 }
 
@@ -53,14 +47,22 @@ export const cyclicEntrySlice = createSlice({
       const entryId = action.payload;
       delete state.entities[entryId];
     },
+    updateEntry: (state, action: PayloadAction<CycleEntryState>) => {
+      cyclicEntryAdapter.updateOne(state, {
+        id: action.payload.id,
+        changes: action.payload,
+      });
+    },
   },
 });
 
-export const { addCyclicEntry, removeCyclicEntry } = cyclicEntrySlice.actions;
+export const { addCyclicEntry, removeCyclicEntry, updateEntry } = cyclicEntrySlice.actions;
 
 const cyclicEntriesSelectors = cyclicEntryAdapter.getSelectors<RootState>(
   (state) => state.cycleEntries
 );
 export const selectCyclicEntries = (state: RootState) => cyclicEntriesSelectors.selectAll(state);
+export const selectOneEntry = (id: number) => (state: RootState) =>
+  cyclicEntriesSelectors.selectById(state, id);
 
 export default cyclicEntrySlice.reducer;

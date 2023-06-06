@@ -6,6 +6,7 @@ import { Provider } from 'react-redux';
 import { store } from './redux/store';
 import AddAccountScreen from './screens/AddAccountScreen';
 import AddEntryScreen from './screens/AddEntryScreen';
+import EditCyclicScreen from './screens/EditCyclicScreen';
 import EditScreen from './screens/EditScreen';
 import EntryListScreen from './screens/EntryListScreen';
 import FeaturesScreen, { Feature } from './screens/FeaturesScreen';
@@ -21,6 +22,7 @@ export type RootStackParamList = {
   AddAccountScreen: undefined;
   EditScreen: { id: number };
   EntryListScreen: undefined;
+  EditCyclicScreen: { id: number };
   FilteredEntryListScreen: undefined;
 };
 
@@ -52,6 +54,7 @@ export default function App() {
           <Stack.Screen name="FilteredEntryListScreen" component={FilteredEntryListScreen} />
           <Stack.Screen name="AddEntryScreen" component={AddEntryScreen} />
           <Stack.Screen name="EditScreen" component={EditScreen} />
+          <Stack.Screen name="EditCyclicScreen" component={EditCyclicScreen} />
           <Stack.Screen name="AddAccountScreen" component={AddAccountScreen} />
         </Stack.Navigator>
       </NavigationContainer>

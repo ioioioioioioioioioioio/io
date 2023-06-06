@@ -24,7 +24,8 @@ function Entry({
   category,
   cycle,
   onPress,
-}: CycleEntryState & { onPress: () => void }) {
+  onDelete,
+}: CycleEntryState & { onPress: () => void } & { onDelete: () => void }) {
   const theme = useTheme();
   const styles = useStyles(theme);
   return id ? (
@@ -32,7 +33,7 @@ function Entry({
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
         <Button
           onPress={() => {
-            onPress(); // Call the parent onPress to update the entries state
+            onDelete();
           }}
           style={{ alignItems: 'center' }}>
           <MaterialIcons name="close" size={30} color={theme.primary} />
@@ -41,6 +42,7 @@ function Entry({
         <CategoryLabel title={category?.categoryName} color={category?.categoryColor} />
       </View>
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        <Text style={styles.cycleText}>{cycle.toUpperCase()}</Text>
         <Text style={styles.text}>{amount}</Text>
         <MaterialCommunityIcons name="arrow-right" color={theme.textPrimary} size={20} />
       </View>
@@ -55,19 +57,25 @@ export default function CycleEntryList({ navigation }: CycleEntryListProps) {
   const [updatedEntries, setUpdatedEntries] = useState(entries);
   const dispatch = useAppDispatch();
 
-  const handleEntryPress = (id: number) => {
+  const handleEntryDelete = (id: number) => {
     dispatch(removeCyclicEntry(id));
   };
 
   useEffect(() => {
-    setUpdatedEntries(entries); // Update the local state when entries change
+    setUpdatedEntries(entries);
   }, [entries]);
 
   return (
     <View style={styles.container}>
       <FlatList
         data={updatedEntries}
-        renderItem={({ item }) => <Entry {...item} onPress={() => handleEntryPress(item.id)} />}
+        renderItem={({ item }) => (
+          <Entry
+            {...item}
+            onPress={() => navigation.navigate('EditCyclicScreen', { id: item.id })}
+            onDelete={() => handleEntryDelete(item.id)}
+          />
+        )}
         keyExtractor={(item) => String(item ? item.id : Math.random())}
       />
     </View>
@@ -112,7 +120,6 @@ const useStyles = (theme: ColorTheme) =>
     entryContainer: {
       flexDirection: 'row',
       justifyContent: 'space-between',
-      paddingHorizontal: 20,
       padding: 10,
       borderColor: 'black',
       backgroundColor: theme.backgroundPrimary,
@@ -120,5 +127,10 @@ const useStyles = (theme: ColorTheme) =>
     },
     text: {
       color: theme.textPrimary,
+    },
+    cycleText: {
+      color: theme.primary,
+      fontSize: 18,
+      paddingHorizontal: 5,
     },
   });
