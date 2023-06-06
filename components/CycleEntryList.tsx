@@ -6,14 +6,10 @@ import Button from './Button';
 import CategoryLabel from './CategoryLabel';
 import useTheme, { ColorTheme } from '../colors/Colors';
 import { useAppSelector, useAppDispatch } from '../redux/hooks';
-import {
-  CycleEntryState,
-  removeCyclicEntry,
-  selectCyclicEntries,
-} from '../redux/slices/cyclicEntrySlice';
+import { EntryState, removeEntry, selectCyclicEntries } from '../redux/slices/entrySlice';
 
 type CycleEntryListProps = {
-  entries: CycleEntryState[];
+  entries: EntryState[];
   navigation: any;
 };
 
@@ -25,7 +21,7 @@ function Entry({
   cycle,
   onPress,
   onDelete,
-}: CycleEntryState & { onPress: () => void } & { onDelete: () => void }) {
+}: EntryState & { onPress: () => void } & { onDelete: () => void }) {
   const theme = useTheme();
   const styles = useStyles(theme);
   return id ? (
@@ -54,25 +50,20 @@ export default function CycleEntryList({ navigation }: CycleEntryListProps) {
   const theme = useTheme();
   const styles = useStyles(theme);
   const entries = useAppSelector((state) => selectCyclicEntries(state));
-  const [updatedEntries, setUpdatedEntries] = useState(entries);
   const dispatch = useAppDispatch();
 
   const handleEntryDelete = (id: number) => {
-    dispatch(removeCyclicEntry(id));
+    dispatch(removeEntry(id));
   };
-
-  useEffect(() => {
-    setUpdatedEntries(entries);
-  }, [entries]);
 
   return (
     <View style={styles.container}>
       <FlatList
-        data={updatedEntries}
+        data={entries}
         renderItem={({ item }) => (
           <Entry
             {...item}
-            onPress={() => navigation.navigate('EditCyclicScreen', { id: item.id })}
+            onPress={() => navigation.navigate('EditScreen', { id: item.id })}
             onDelete={() => handleEntryDelete(item.id)}
           />
         )}

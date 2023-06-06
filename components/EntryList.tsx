@@ -4,8 +4,9 @@ import React, { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react
 import CategoryLabel from './CategoryLabel';
 import useTheme, { ColorTheme } from '../colors/Colors';
 import { useAppDispatch } from '../redux/hooks';
+import { Account } from '../redux/slices/accountSlice';
 import { Category } from '../redux/slices/categoriesSlice';
-import { EntryState, updateEntry } from '../redux/slices/entrySlice';
+import { Cycle, EntryState, updateEntry } from '../redux/slices/entrySlice';
 
 type EntryListProps = {
   entries: EntryState[];
@@ -51,7 +52,9 @@ export default function EntryList({ entries, navigation }: EntryListProps) {
     category: Category,
     done: boolean,
     date: Date,
-    imageUri: string | null
+    imageUri: string | null,
+    account: Account,
+    cycle: Cycle
   ) => {
     dispatch(
       updateEntry({
@@ -62,6 +65,8 @@ export default function EntryList({ entries, navigation }: EntryListProps) {
         done: !done,
         date,
         imageUri,
+        account,
+        cycle,
       })
     );
   };
@@ -80,7 +85,9 @@ export default function EntryList({ entries, navigation }: EntryListProps) {
                 item.category,
                 item.done,
                 item.date,
-                item.imageUri
+                item.imageUri,
+                item.account,
+                item.cycle
               )
             }
             onPress={() => navigation.navigate('EditScreen', { id: item.id })}

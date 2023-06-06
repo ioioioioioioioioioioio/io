@@ -5,8 +5,7 @@ import useTheme, { ColorTheme } from '../colors/Colors';
 import CycleEntryList from '../components/CycleEntryList';
 import EntryList from '../components/EntryList';
 import { useAppSelector } from '../redux/hooks';
-import { selectCyclicEntries } from '../redux/slices/cyclicEntrySlice';
-import { selectEntries } from '../redux/slices/entrySlice';
+import { selectEntries, selectCyclicEntries } from '../redux/slices/entrySlice';
 import useTypedNavigation from '../utils/useTypedNavigation';
 
 export default function FilteredEntryListScreen() {

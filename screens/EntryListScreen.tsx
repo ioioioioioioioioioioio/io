@@ -1,12 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import React, { StyleSheet, Text, TouchableOpacity, View, Switch } from 'react-native';
 
 import useTheme, { ColorTheme } from '../colors/Colors';
 import CycleEntryList from '../components/CycleEntryList';
 import EntryList from '../components/EntryList';
 import { useAppSelector } from '../redux/hooks';
-import { selectCyclicEntries } from '../redux/slices/cyclicEntrySlice';
-import { selectEntries } from '../redux/slices/entrySlice';
+import { selectEntries, selectCyclicEntries } from '../redux/slices/entrySlice';
 import useTypedNavigation from '../utils/useTypedNavigation';
 
 export default function EntryListScreen() {
@@ -21,6 +20,7 @@ export default function EntryListScreen() {
   };
   const theme = useTheme();
   const styles = useStyles(theme);
+
   return (
     <View style={styles.mainContainer}>
       <View style={styles.titleContainer}>
