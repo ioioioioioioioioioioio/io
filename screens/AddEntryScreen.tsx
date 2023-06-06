@@ -41,8 +41,8 @@ export default function AddEntryScreen({ navigation }: AddEntryScreenProps) {
   const [name, setName] = useState('');
   const [amount, setAmount] = useState('');
   const [selectedAccountName, setSelectedAccountName] = useState('Select account');
-  const [selectedCategoryName, setSelectedCategoryName] = useState('Select category');
-  const [selectedCategoryColor, setSelectedCategoryColor] = useState('Category color');
+  const [selectedCategoryName, setSelectedCategoryName] = useState('No Category');
+  const [selectedCategoryColor, setSelectedCategoryColor] = useState('#ddff00');
   const [selectedCategoryId, setSelectedCategoryId] = useState(0);
   const [selectedAccountId, setSelectedAccountId] = useState(0);
   const [selectedAccountCurrency, setSelectedAccountCurrency] = useState('');
