@@ -43,8 +43,8 @@ export default function EditCyclicScreen({
   const [name, setName] = useState('');
   const [amount, setAmount] = useState('');
   const [selectedCategoryId, setSelectedCategoryId] = useState(0);
-  const [selectedCategoryName, setSelectedCategoryName] = useState('');
-  const [selectedCategoryColor, setSelectedCategoryColor] = useState('');
+  const [selectedCategoryName, setSelectedCategoryName] = useState('No Category');
+  const [selectedCategoryColor, setSelectedCategoryColor] = useState('#ddff00');
   const [showCategoryList, setShowCategoryList] = useState(false);
   const [showCalendarModal, setShowCalendarModal] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());

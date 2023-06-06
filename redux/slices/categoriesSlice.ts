@@ -17,6 +17,7 @@ interface CategoriesState {
 // Define the initial state using that type
 const initialState: CategoriesState = {
   categories: [
+    { id: 0, categoryName: 'No Category', categoryColor: '#ddff00' },
     { id: 1, categoryName: 'Food', categoryColor: '#ed1c24' },
     { id: 2, categoryName: 'Clothing', categoryColor: '#d11cd5' },
     { id: 3, categoryName: 'Electronics', categoryColor: '#1633e6' },
