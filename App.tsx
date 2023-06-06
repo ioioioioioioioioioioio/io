@@ -13,6 +13,7 @@ import FeaturesScreen, { Feature } from './screens/FeaturesScreen';
 import FilteredEntryListScreen from './screens/FilteredEntryListScreen';
 import InfoScreen from './screens/InfoScreen';
 import PetScreen from './screens/PetScreen';
+import AccountListScreen from "./screens/AccountListScreen";
 
 export type RootStackParamList = {
   FeaturesScreen: { features: Feature[] };
@@ -24,6 +25,7 @@ export type RootStackParamList = {
   EntryListScreen: undefined;
   EditCyclicScreen: { id: number };
   FilteredEntryListScreen: undefined;
+  AccountListScreen: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -36,6 +38,7 @@ const featureList: Feature[] = [
   { title: 'Entry List', screenName: 'EntryListScreen', props: {} },
   { title: 'Filtered Entry List', screenName: 'FilteredEntryListScreen', props: {} },
   { title: 'Edit Entry', screenName: 'EditScreen', props: { id: 3 } },
+  { title: 'Account List', screenName: 'AccountListScreen', props: {} },
 ];
 
 export default function App() {
@@ -56,6 +59,7 @@ export default function App() {
           <Stack.Screen name="EditScreen" component={EditScreen} />
           <Stack.Screen name="EditCyclicScreen" component={EditCyclicScreen} />
           <Stack.Screen name="AddAccountScreen" component={AddAccountScreen} />
+          <Stack.Screen name="AccountListScreen" component={AccountListScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>
