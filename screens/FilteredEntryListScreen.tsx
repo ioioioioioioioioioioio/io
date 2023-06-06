@@ -35,7 +35,7 @@ export default function FilteredEntryListScreen() {
   const [showCategoryList, setShowCategoryList] = useState(false);
   const [showStartCalendarModal, setShowStartCalendarModal] = useState(false);
   const [showEndCalendarModal, setShowEndCalendarModal] = useState(false);
-  const [selectedStartDate, setSelectedStartDate] = useState(new Date('0001-01-01T00:00:00.000Z'));
+  const [selectedStartDate, setSelectedStartDate] = useState(new Date('2001-01-01T00:00:00.000Z'));
   const [selectedEndDate, setSelectedEndDate] = useState(new Date());
   const [startAmount, setStartAmount] = useState('');
   const [endAmount, setEndAmount] = useState('');
