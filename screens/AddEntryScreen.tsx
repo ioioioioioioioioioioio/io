@@ -197,12 +197,10 @@ export default function AddEntryScreen({ navigation }: AddEntryScreenProps) {
             />
           )}
           <View style={styles.detailContainer}>
-            <Button
-              onPress={() => setShowCalendarModal(true)}
-              style={{ paddingBottom: 5, paddingRight: 10 }}>
-              <AntDesign name="calendar" size={45} />
-            </Button>
-            <Text style={styles.detailText}>{formattedDate}</Text>
+            <AntDesign name="calendar" size={45} />
+            <TouchableOpacity onPress={() => setShowCalendarModal(true)}>
+              <Text style={styles.detailText}>{formattedDate}</Text>
+            </TouchableOpacity>
           </View>
           <View>
             <Modal visible={showCalendarModal} style={styles.modalContainer}>
