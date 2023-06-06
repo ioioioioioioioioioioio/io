@@ -54,6 +54,7 @@ export default function EditScreen({
   const [selectedAccountId, setSelectedAccountId] = useState(0);
   const [selectedAccountName, setSelectedAccountName] = useState('');
   const [showAccountList, setShowAccountList] = useState(false);
+  const [accountCurrency, setAccountCurrency] = useState('');
 
   const defaultName = isIncome ? 'New income' : 'New expense';
   const state = useSelector((state: RootState) => state);
@@ -73,6 +74,7 @@ export default function EditScreen({
       setSelectedCategoryColor(selectedEntry.category.categoryColor);
       setSelectedAccountName(selectedEntry.account.name);
       setSelectedAccountId(selectedEntry.account.id);
+      setAccountCurrency(selectedEntry.account.currency);
       // eslint-disable-next-line no-lone-blocks
       {
         selectedEntry && selectedEntry.date && setSelectedDate(selectedEntry.date);
@@ -144,7 +146,7 @@ export default function EditScreen({
             placeholder="0"
             keyboardType="numeric"
             onChangeText={(amount) => setAmount(amount.replace('-', ''))}
-            value={amount}
+            value={amount + ' ' + accountCurrency}
             ref={amountInput}
             onSubmitEditing={onSubmitEntry}
           />
@@ -169,6 +171,7 @@ export default function EditScreen({
                     onPress={() => {
                       setSelectedAccountName(item.name);
                       setSelectedAccountId(item.id);
+                      setAccountCurrency(item.currency);
                       setShowAccountList(!showAccountList);
                     }}>
                     <Text style={{ fontWeight: 'bold' }}>{item.name}</Text>
@@ -279,9 +282,9 @@ const styles = StyleSheet.create({
     borderBottomColor: 'gray',
   },
   amountInput: {
-    width: 110,
+    width: 180,
     textAlign: 'center',
-    fontSize: 40,
+    fontSize: 35,
     borderWidth: 5,
     borderRadius: 50,
   },

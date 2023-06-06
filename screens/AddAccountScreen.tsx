@@ -32,6 +32,7 @@ export default function AddEntryScreen({ navigation }: AddAccountScreenProps) {
       addAccount({
         name: finalName,
         amount: numericAmount,
+        currency:currency,
       })
     );
     navigation.goBack();
