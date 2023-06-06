@@ -36,7 +36,7 @@ export default function FilteredEntryListScreen() {
   const [showStartCalendarModal, setShowStartCalendarModal] = useState(false);
   const [showEndCalendarModal, setShowEndCalendarModal] = useState(false);
   const [selectedStartDate, setSelectedStartDate] = useState(new Date('0001-01-01T00:00:00.000Z'));
-  const [selectedEndDate, setSelectedEndDate] = useState(new Date('3000-01-01T00:00:00.000Z'));
+  const [selectedEndDate, setSelectedEndDate] = useState(new Date());
   const [startAmount, setStartAmount] = useState('');
   const [endAmount, setEndAmount] = useState('');
 
@@ -78,84 +78,90 @@ export default function FilteredEntryListScreen() {
         />
         {!isCyclicList && <Text style={styles.titleText}>Your recent expenses</Text>}
         {isCyclicList && <Text style={styles.titleText}>Your cyclic expenses</Text>}
-        <View style={styles.rowContainer}>
-          <View style={styles.detailContainer}>
-            <MaterialIcons name="folder" size={buttonSize} color="white" />
-            <TouchableOpacity
-              style={{
-                backgroundColor: selectedCategoryColor,
-                padding: 10,
-                borderRadius: 5,
-              }}
-              onPress={() => setShowCategoryList(!showCategoryList)}>
-              <Text style={styles.detailText}>
-                {selectedCategoryName === '' ? 'Select category' : selectedCategoryName}
-              </Text>
-            </TouchableOpacity>
+        <View style={styles.colContainer}>
+          <View style={styles.rowContainer}>
+            <View style={styles.detailContainer}>
+              <Text style={styles.text}>Choose Category</Text>
+              <AntDesign style={styles.icon} name="folder1" size={45} color="white" />
+              <TouchableOpacity
+                style={{
+                  backgroundColor: selectedCategoryColor,
+                  padding: 10,
+                  borderRadius: 5,
+                }}
+                onPress={() => setShowCategoryList(!showCategoryList)}>
+                <Text style={styles.detailText}>
+                  {selectedCategoryName === '' ? 'Select category' : selectedCategoryName}
+                </Text>
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
-        <View style={styles.rowContainer}>
-          <View style={styles.detailContainer}>
-            <TextInput
-              style={[styles.amountInput]}
-              placeholder="0"
-              keyboardType="numeric"
-              onChangeText={(startAmount) => setStartAmount(startAmount.replace('-', ''))}
-              value={startAmount}
-              // ref={amountInput}
-              // onSubmitEditing={onSubmitEntry}
-            />
-            <AntDesign name="minus" size={45} color="white" />
-            <TextInput
-              style={[styles.amountInput]}
-              placeholder="0"
-              keyboardType="numeric"
-              onChangeText={(endAmount) => setEndAmount(endAmount.replace('-', ''))}
-              value={endAmount}
-              // ref={amountInput}
-              // onSubmitEditing={onSubmitEntry}
-            />
-          </View>
+          <View style={styles.rowContainer}>
+            <View style={styles.detailContainer}>
+                <Text style={styles.text}>Choose Range</Text>
+              <AntDesign style={styles.icon} name="aliyun" size={45} color="white" />
+              <TextInput
+                style={[styles.amountInput]}
+                placeholder="0"
+                keyboardType="numeric"
+                onChangeText={(startAmount) => setStartAmount(startAmount.replace('-', ''))}
+                value={startAmount}
+                // ref={amountInput}
+                // onSubmitEditing={onSubmitEntry}
+              />
+              <AntDesign name="minus" size={45} color="white" />
+              <TextInput
+                style={[styles.amountInput]}
+                placeholder="0"
+                keyboardType="numeric"
+                onChangeText={(endAmount) => setEndAmount(endAmount.replace('-', ''))}
+                value={endAmount}
+                // ref={amountInput}
+                // onSubmitEditing={onSubmitEntry}
+              />
+            </View>
 
-          {showCategoryList && (
-            <CategoryList
+            {showCategoryList && (
+              <CategoryList
               onCategorySelect={(category) => {
                 setSelectedCategoryId(category.id);
                 setSelectedCategoryName(category.categoryName);
                 setSelectedCategoryColor(category.categoryColor);
                 setShowCategoryList(false);
               }}
-            />
-          )}
-        </View>
-        <View style={styles.rowContainer}>
-          <View style={styles.detailContainer}>
-            <AntDesign name="calendar" size={45} color="white" />
-            <TouchableOpacity onPress={() => setShowStartCalendarModal(true)}>
-              <Text style={styles.text}>{selectedStartDate ? formattedStartDate : '-'}</Text>
-            </TouchableOpacity>
-            <AntDesign name="minus" size={45} color="white" />
-            <TouchableOpacity onPress={() => setShowEndCalendarModal(true)}>
-              <Text style={styles.text}>{formattedEndDate}</Text>
-            </TouchableOpacity>
+              />
+              )}
           </View>
-          <View>
-            <Modal visible={showStartCalendarModal} style={styles.modalContainer}>
-              <CalendarPicker onDateChange={onStartDateChange} />
-              <Button
-                onPress={() => setShowStartCalendarModal(false)}
-                style={{ alignItems: 'center' }}>
-                <MaterialIcons name="check-circle" size={buttonSize} color="black" />
-              </Button>
-            </Modal>
-            <Modal visible={showEndCalendarModal} style={styles.modalContainer}>
-              <CalendarPicker onDateChange={onEndDateChange} />
-              <Button
-                onPress={() => setShowEndCalendarModal(false)}
-                style={{ alignItems: 'center' }}>
-                <MaterialIcons name="check-circle" size={buttonSize} color="black" />
-              </Button>
-            </Modal>
+          <View style={styles.rowContainer}>
+            <View style={styles.detailContainer}>
+                <Text style={styles.text}>Choose Date  </Text>
+              <AntDesign style={styles.icon} name="calendar" size={45} color="white" />
+              <TouchableOpacity onPress={() => setShowStartCalendarModal(true)}>
+                <Text style={styles.text}>{selectedStartDate ? formattedStartDate : '-'}</Text>
+              </TouchableOpacity>
+              <AntDesign style={styles.icon} name="minus" size={45} color="white" />
+              <TouchableOpacity onPress={() => setShowEndCalendarModal(true)}>
+                <Text style={styles.text}>{formattedEndDate}</Text>
+              </TouchableOpacity>
+            </View>
+            <View>
+              <Modal visible={showStartCalendarModal} style={styles.modalContainer}>
+                <CalendarPicker onDateChange={onStartDateChange} />
+                <Button
+                  onPress={() => setShowStartCalendarModal(false)}
+                  style={{ alignItems: 'center' }}>
+                  <MaterialIcons name="check-circle" size={buttonSize} color="black" />
+                </Button>
+              </Modal>
+              <Modal visible={showEndCalendarModal} style={styles.modalContainer}>
+                <CalendarPicker onDateChange={onEndDateChange} />
+                <Button
+                  onPress={() => setShowEndCalendarModal(false)}
+                  style={{ alignItems: 'center' }}>
+                  <MaterialIcons name="check-circle" size={buttonSize} color="black" />
+                </Button>
+              </Modal>
+            </View>
           </View>
         </View>
       </View>
@@ -217,6 +223,7 @@ const useStyles = (theme: ColorTheme) =>
       borderRadius: 5,
     },
     detailContainer: {
+      paddingLeft: 10,
       color: 'white',
       flexDirection: 'row',
       // justifyContent: 'flex-start',
@@ -240,6 +247,12 @@ const useStyles = (theme: ColorTheme) =>
     },
     rowContainer: {
       flexDirection: 'row',
+      // justifyContent: 'space-between',
+      alignItems: 'flex-start',
+    },
+    colContainer: {
+      width: '100%',
+      flexDirection: 'column',
       justifyContent: 'space-between',
       alignItems: 'flex-start',
     },
@@ -251,5 +264,8 @@ const useStyles = (theme: ColorTheme) =>
       borderWidth: 4,
       borderRadius: 10,
       borderColor: 'white',
+    },
+    icon: {
+      padding: 10,
     },
   });
