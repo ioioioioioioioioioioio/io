@@ -45,6 +45,7 @@ export default function AddEntryScreen({ navigation }: AddEntryScreenProps) {
   const [selectedCategoryColor, setSelectedCategoryColor] = useState('Category color');
   const [selectedCategoryId, setSelectedCategoryId] = useState(0);
   const [selectedAccountId, setSelectedAccountId] = useState(0);
+  const [selectedAccountCurrency, setSelectedAccountCurrency] = useState('');
   const [showAccountList, setShowAccountList] = useState(false);
   const [showCategoryList, setShowCategoryList] = useState(false);
   const [showCalendarModal, setShowCalendarModal] = useState(false);
@@ -143,6 +144,7 @@ export default function AddEntryScreen({ navigation }: AddEntryScreenProps) {
             ref={amountInput}
             onSubmitEditing={onSubmitEntry}
           />
+          <Text style={styles.currency}>{selectedAccountCurrency}</Text>
         </View>
 
         <View style={styles.detailsContainer}>
@@ -164,6 +166,7 @@ export default function AddEntryScreen({ navigation }: AddEntryScreenProps) {
                     onPress={() => {
                       setSelectedAccountName(item.name);
                       setSelectedAccountId(item.id);
+                      setSelectedAccountCurrency(item.currency);
                       setShowAccountList(!showAccountList);
                     }}>
                     <Text style={{ fontWeight: 'bold' }}>{item.name}</Text>
@@ -300,7 +303,7 @@ const styles = StyleSheet.create({
     borderBottomColor: 'gray',
   },
   amountInput: {
-    width: 110,
+    width: 130,
     textAlign: 'center',
     fontSize: 40,
     borderWidth: 5,
@@ -359,5 +362,11 @@ const styles = StyleSheet.create({
   accountListElemStyle: {
     paddingVertical: 5,
     borderBottomWidth: StyleSheet.hairlineWidth,
+  },
+  currency: {
+    fontSize: 20,
+    alignSelf: 'flex-end',
+    marginLeft: 3,
+    marginRight: 3,
   },
 });

@@ -146,12 +146,12 @@ export default function EditScreen({
             placeholder="0"
             keyboardType="numeric"
             onChangeText={(amount) => setAmount(amount.replace('-', ''))}
-            value={amount + ' ' + accountCurrency}
+            value={amount}
             ref={amountInput}
             onSubmitEditing={onSubmitEntry}
           />
+          <Text style={styles.currency}>{accountCurrency}</Text>
         </View>
-
         <View style={styles.detailsContainer}>
           <Text>Details</Text>
           <View style={styles.detailContainer}>
@@ -282,9 +282,9 @@ const styles = StyleSheet.create({
     borderBottomColor: 'gray',
   },
   amountInput: {
-    width: 180,
+    width: 130,
     textAlign: 'center',
-    fontSize: 35,
+    fontSize: 40,
     borderWidth: 5,
     borderRadius: 50,
   },
@@ -341,5 +341,11 @@ const styles = StyleSheet.create({
   accountListElemStyle: {
     paddingVertical: 5,
     borderBottomWidth: StyleSheet.hairlineWidth,
+  },
+  currency: {
+    fontSize: 20,
+    alignSelf: 'flex-end',
+    marginLeft: 3,
+    marginRight: 3,
   },
 });
