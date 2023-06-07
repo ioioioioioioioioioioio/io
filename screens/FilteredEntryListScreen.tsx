@@ -8,7 +8,6 @@ import React, {
   TouchableOpacity,
   View,
   Switch,
-  FlatList,
   Modal,
   TextInput,
 } from 'react-native';
@@ -31,7 +30,7 @@ export default function FilteredEntryListScreen() {
   const navigation = useTypedNavigation();
   const [selectedCategoryName, setSelectedCategoryName] = useState('No Category');
   const [selectedCategoryColor, setSelectedCategoryColor] = useState('#ddff00');
-  const [selectedCategoryId, setSelectedCategoryId] = useState(0);
+  // const [selectedCategoryId, setSelectedCategoryId] = useState(0);
   const [showCategoryList, setShowCategoryList] = useState(false);
   const [showStartCalendarModal, setShowStartCalendarModal] = useState(false);
   const [showEndCalendarModal, setShowEndCalendarModal] = useState(false);
@@ -94,7 +93,7 @@ export default function FilteredEntryListScreen() {
     //   resultCyclic.map((expense) => expense.amount)
     // );
     setFilteredCyclicExpenses(resultCyclic);
-    console.log();
+    // console.log();
   };
 
   const toggleSwitch = () => {
@@ -156,7 +155,7 @@ export default function FilteredEntryListScreen() {
             <View style={styles.rowContainer}>
               <CategoryList
                 onCategorySelect={(category) => {
-                  setSelectedCategoryId(category.id);
+                  // setSelectedCategoryId(category.id);
                   setSelectedCategoryName(category.categoryName);
                   setSelectedCategoryColor(category.categoryColor);
                   setShowCategoryList(false);
