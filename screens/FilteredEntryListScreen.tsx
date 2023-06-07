@@ -43,7 +43,7 @@ export default function FilteredEntryListScreen() {
   const [filteredCyclicExpenses, setFilteredCyclicExpenses] = useState(cyclicExpenses);
 
   const applyFilter = () => {
-    // Normal
+    // NORMAL
     let result = expenses;
 
     const filteredByCategory = result.filter(
@@ -60,14 +60,15 @@ export default function FilteredEntryListScreen() {
         (Math.abs(expense.amount) <= parseInt(endAmount, 10) || parseInt(endAmount, 10) === 0)
     );
     result = filteredByAmount;
-    console.log('result', expenses);
-    // const filteredByDate = expenses.filter(
-    //   (expense) =>
-    //     expense.date.toDateString >= selectedStartDate.toDateString &&
-    //     expense.date.toDateString <= selectedEndDate.toDateString
-    //   );
-    // result = filteredByDate;
-    // Set the filtered expenses in the state
+    const filteredByDate = result.filter(
+      (expense) =>
+        expense.date && expense.date >= selectedStartDate && expense.date <= selectedEndDate
+    );
+    result = filteredByDate;
+    // console.log(
+    //   'normal',
+    //   result.map((expense) => expense.amount)
+    // );
     setFilteredExpenses(result);
 
     // CYCLIC
@@ -75,7 +76,7 @@ export default function FilteredEntryListScreen() {
 
     const filteredByCategoryCyclic = resultCyclic.filter(
       (expense) =>
-        expense.category.categoryName === selectedCategoryName ||
+        (expense !== undefined && expense.category.categoryName === selectedCategoryName) ||
         selectedCategoryName === 'No Category'
     );
     resultCyclic = filteredByCategoryCyclic;
@@ -88,7 +89,12 @@ export default function FilteredEntryListScreen() {
     );
     resultCyclic = filteredByAmountCyclic;
 
+    // console.log(
+    //   'cyclic',
+    //   resultCyclic.map((expense) => expense.amount)
+    // );
     setFilteredCyclicExpenses(resultCyclic);
+    console.log();
   };
 
   const toggleSwitch = () => {
@@ -132,7 +138,7 @@ export default function FilteredEntryListScreen() {
           <View style={styles.rowContainer}>
             <View style={styles.detailContainer}>
               <Text style={styles.text}>Choose Category</Text>
-              <AntDesign style={styles.icon} name="folder1" size={45} color="white" />
+              {/* <AntDesign style={styles.icon} name="folder1" size={45} color="white" /> */}
               <TouchableOpacity
                 style={{
                   backgroundColor: selectedCategoryColor,
@@ -146,8 +152,8 @@ export default function FilteredEntryListScreen() {
               </TouchableOpacity>
             </View>
           </View>
-          <View style={styles.rowContainer}>
-            {showCategoryList && (
+          {showCategoryList && (
+            <View style={styles.rowContainer}>
               <CategoryList
                 onCategorySelect={(category) => {
                   setSelectedCategoryId(category.id);
@@ -156,12 +162,12 @@ export default function FilteredEntryListScreen() {
                   setShowCategoryList(false);
                 }}
               />
-            )}
-          </View>
-          <View style={styles.rowContainer}>
+            </View>
+          )}
+          <View>
             <View style={styles.detailContainer}>
-              <Text style={styles.text}>Choose Range</Text>
-              <AntDesign style={styles.icon} name="aliyun" size={45} color="white" />
+              <Text style={styles.text}>Choose Range </Text>
+              {/* <AntDesign style={styles.icon} name="aliyun" size={45} color="white" /> */}
               <TextInput
                 style={[styles.amountInput]}
                 placeholder="0"
@@ -179,37 +185,41 @@ export default function FilteredEntryListScreen() {
               />
             </View>
           </View>
-          <View style={styles.rowContainer}>
-            <View style={styles.detailContainer}>
-              <Text style={styles.text}>Choose Date </Text>
-              <AntDesign style={styles.icon} name="calendar" size={45} color="white" />
-              <TouchableOpacity onPress={() => setShowStartCalendarModal(true)}>
-                <Text style={styles.text}>{selectedStartDate ? formattedStartDate : '-'}</Text>
-              </TouchableOpacity>
-              <AntDesign style={styles.icon} name="minus" size={45} color="white" />
-              <TouchableOpacity onPress={() => setShowEndCalendarModal(true)}>
-                <Text style={styles.text}>{selectedEndDate ? formattedEndDate : '-'}</Text>
-              </TouchableOpacity>
+          {!isCyclicList && (
+            <View style={styles.rowContainer}>
+              <View style={styles.detailContainer}>
+                <Text style={styles.text}>Choose Date </Text>
+                {/* <AntDesign style={styles.icon} name="calendar" size={45} color="white" /> */}
+                <TouchableOpacity onPress={() => setShowStartCalendarModal(true)}>
+                  <Text style={styles.amountInput}>
+                    {selectedStartDate ? formattedStartDate : '-'}
+                  </Text>
+                </TouchableOpacity>
+                <AntDesign style={styles.icon} name="minus" size={45} color="white" />
+                <TouchableOpacity onPress={() => setShowEndCalendarModal(true)}>
+                  <Text style={styles.amountInput}>{selectedEndDate ? formattedEndDate : '-'}</Text>
+                </TouchableOpacity>
+              </View>
+              <View>
+                <Modal visible={showStartCalendarModal} style={styles.modalContainer}>
+                  <CalendarPicker onDateChange={onStartDateChange} />
+                  <Button
+                    onPress={() => setShowStartCalendarModal(false)}
+                    style={{ alignItems: 'center' }}>
+                    <MaterialIcons name="check-circle" size={buttonSize} color="black" />
+                  </Button>
+                </Modal>
+                <Modal visible={showEndCalendarModal} style={styles.modalContainer}>
+                  <CalendarPicker onDateChange={onEndDateChange} />
+                  <Button
+                    onPress={() => setShowEndCalendarModal(false)}
+                    style={{ alignItems: 'center' }}>
+                    <MaterialIcons name="check-circle" size={buttonSize} color="black" />
+                  </Button>
+                </Modal>
+              </View>
             </View>
-            <View>
-              <Modal visible={showStartCalendarModal} style={styles.modalContainer}>
-                <CalendarPicker onDateChange={onStartDateChange} />
-                <Button
-                  onPress={() => setShowStartCalendarModal(false)}
-                  style={{ alignItems: 'center' }}>
-                  <MaterialIcons name="check-circle" size={buttonSize} color="black" />
-                </Button>
-              </Modal>
-              <Modal visible={showEndCalendarModal} style={styles.modalContainer}>
-                <CalendarPicker onDateChange={onEndDateChange} />
-                <Button
-                  onPress={() => setShowEndCalendarModal(false)}
-                  style={{ alignItems: 'center' }}>
-                  <MaterialIcons name="check-circle" size={buttonSize} color="black" />
-                </Button>
-              </Modal>
-            </View>
-          </View>
+          )}
         </View>
       </View>
       {!isCyclicList && <EntryList entries={filteredExpenses} navigation={navigation} />}
@@ -294,6 +304,7 @@ const useStyles = (theme: ColorTheme) =>
       flexDirection: 'row',
       // justifyContent: 'space-between',
       alignItems: 'flex-start',
+      paddingBottom: 30,
     },
     colContainer: {
       width: '100%',
@@ -302,7 +313,7 @@ const useStyles = (theme: ColorTheme) =>
       alignItems: 'flex-start',
     },
     amountInput: {
-      width: 70,
+      width: 90,
       textAlign: 'center',
       fontSize: 20,
       color: 'white',

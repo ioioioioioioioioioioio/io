@@ -29,6 +29,7 @@ export const entrySlice = createSlice({
         category: { categoryColor: '#1633e6', categoryName: 'Electronics', id: 3 },
         done: true,
         account: { currency: 'PLN', name: 'test account', amount: 100, id: 1 },
+        date: new Date(),
       },
       2: {
         id: 2,
@@ -37,6 +38,7 @@ export const entrySlice = createSlice({
         category: { categoryColor: '#00aeef', categoryName: 'Home', id: 4 },
         done: false,
         account: { currency: 'PLN', name: 'test account', amount: 100, id: 1 },
+        date: new Date(),
       },
       3: {
         id: 3,
@@ -45,6 +47,7 @@ export const entrySlice = createSlice({
         category: { categoryColor: '#ed1c24', categoryName: 'Food', id: 1 },
         done: true,
         account: { currency: 'PLN', name: 'test account', amount: 100, id: 1 },
+        date: new Date(),
       },
     },
   }),
