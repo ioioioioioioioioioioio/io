@@ -37,10 +37,60 @@ export default function FilteredEntryListScreen() {
   const [showEndCalendarModal, setShowEndCalendarModal] = useState(false);
   const [selectedStartDate, setSelectedStartDate] = useState(new Date('2001-01-01T00:00:00.000Z'));
   const [selectedEndDate, setSelectedEndDate] = useState(new Date());
-  const [startAmount, setStartAmount] = useState('');
-  const [endAmount, setEndAmount] = useState('');
+  const [startAmount, setStartAmount] = useState('0');
+  const [endAmount, setEndAmount] = useState('0');
+  const [filteredExpenses, setFilteredExpenses] = useState(expenses);
+  const [filteredCyclicExpenses, setFilteredCyclicExpenses] = useState(cyclicExpenses);
 
-  // Duplicate entries to test scrolling
+  const applyFilter = () => {
+    // Normal
+    let result = expenses;
+
+    const filteredByCategory = result.filter(
+      (expense) =>
+        expense.category.categoryName === selectedCategoryName ||
+        selectedCategoryName === 'No Category'
+    );
+    result = filteredByCategory;
+
+    const filteredByAmount = result.filter(
+      (expense) =>
+        (Math.abs(expense.amount) >= parseInt(startAmount, 10) ||
+          parseInt(startAmount, 10) === 0) &&
+        (Math.abs(expense.amount) <= parseInt(endAmount, 10) || parseInt(endAmount, 10) === 0)
+    );
+    result = filteredByAmount;
+    console.log('result', expenses);
+    // const filteredByDate = expenses.filter(
+    //   (expense) =>
+    //     expense.date.toDateString >= selectedStartDate.toDateString &&
+    //     expense.date.toDateString <= selectedEndDate.toDateString
+    //   );
+    // result = filteredByDate;
+    // Set the filtered expenses in the state
+    setFilteredExpenses(result);
+
+    // CYCLIC
+    let resultCyclic = cyclicExpenses;
+
+    const filteredByCategoryCyclic = resultCyclic.filter(
+      (expense) =>
+        expense.category.categoryName === selectedCategoryName ||
+        selectedCategoryName === 'No Category'
+    );
+    resultCyclic = filteredByCategoryCyclic;
+
+    const filteredByAmountCyclic = resultCyclic.filter(
+      (expense) =>
+        (Math.abs(expense.amount) >= parseInt(startAmount, 10) ||
+          parseInt(startAmount, 10) === 0) &&
+        (Math.abs(expense.amount) <= parseInt(endAmount, 10) || parseInt(endAmount, 10) === 0)
+    );
+    resultCyclic = filteredByAmountCyclic;
+
+    setFilteredCyclicExpenses(resultCyclic);
+  };
+
   const toggleSwitch = () => {
     setIsCyclicList((isCyclicList) => !isCyclicList);
   };
@@ -97,8 +147,20 @@ export default function FilteredEntryListScreen() {
             </View>
           </View>
           <View style={styles.rowContainer}>
+            {showCategoryList && (
+              <CategoryList
+                onCategorySelect={(category) => {
+                  setSelectedCategoryId(category.id);
+                  setSelectedCategoryName(category.categoryName);
+                  setSelectedCategoryColor(category.categoryColor);
+                  setShowCategoryList(false);
+                }}
+              />
+            )}
+          </View>
+          <View style={styles.rowContainer}>
             <View style={styles.detailContainer}>
-                <Text style={styles.text}>Choose Range</Text>
+              <Text style={styles.text}>Choose Range</Text>
               <AntDesign style={styles.icon} name="aliyun" size={45} color="white" />
               <TextInput
                 style={[styles.amountInput]}
@@ -106,8 +168,6 @@ export default function FilteredEntryListScreen() {
                 keyboardType="numeric"
                 onChangeText={(startAmount) => setStartAmount(startAmount.replace('-', ''))}
                 value={startAmount}
-                // ref={amountInput}
-                // onSubmitEditing={onSubmitEntry}
               />
               <AntDesign name="minus" size={45} color="white" />
               <TextInput
@@ -116,32 +176,19 @@ export default function FilteredEntryListScreen() {
                 keyboardType="numeric"
                 onChangeText={(endAmount) => setEndAmount(endAmount.replace('-', ''))}
                 value={endAmount}
-                // ref={amountInput}
-                // onSubmitEditing={onSubmitEntry}
               />
             </View>
-
-            {showCategoryList && (
-              <CategoryList
-              onCategorySelect={(category) => {
-                setSelectedCategoryId(category.id);
-                setSelectedCategoryName(category.categoryName);
-                setSelectedCategoryColor(category.categoryColor);
-                setShowCategoryList(false);
-              }}
-              />
-              )}
           </View>
           <View style={styles.rowContainer}>
             <View style={styles.detailContainer}>
-                <Text style={styles.text}>Choose Date  </Text>
+              <Text style={styles.text}>Choose Date </Text>
               <AntDesign style={styles.icon} name="calendar" size={45} color="white" />
               <TouchableOpacity onPress={() => setShowStartCalendarModal(true)}>
                 <Text style={styles.text}>{selectedStartDate ? formattedStartDate : '-'}</Text>
               </TouchableOpacity>
               <AntDesign style={styles.icon} name="minus" size={45} color="white" />
               <TouchableOpacity onPress={() => setShowEndCalendarModal(true)}>
-                <Text style={styles.text}>{formattedEndDate}</Text>
+                <Text style={styles.text}>{selectedEndDate ? formattedEndDate : '-'}</Text>
               </TouchableOpacity>
             </View>
             <View>
@@ -165,11 +212,9 @@ export default function FilteredEntryListScreen() {
           </View>
         </View>
       </View>
-      {!isCyclicList && <EntryList entries={expenses} navigation={navigation} />}
-      {isCyclicList && <CycleEntryList entries={cyclicExpenses} navigation={navigation} />}
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => navigation.navigate('FilteredEntryListScreen')}>
+      {!isCyclicList && <EntryList entries={filteredExpenses} navigation={navigation} />}
+      {isCyclicList && <CycleEntryList entries={filteredCyclicExpenses} navigation={navigation} />}
+      <TouchableOpacity style={styles.button} onPress={applyFilter}>
         <Text style={styles.text}>Update Filter...</Text>
       </TouchableOpacity>
     </View>
