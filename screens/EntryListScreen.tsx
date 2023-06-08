@@ -2,7 +2,6 @@ import { useState } from 'react';
 import React, { StyleSheet, Text, TouchableOpacity, View, Switch } from 'react-native';
 
 import useTheme, { ColorTheme } from '../colors/Colors';
-import CycleEntryList from '../components/CycleEntryList';
 import EntryList from '../components/EntryList';
 import { useAppSelector } from '../redux/hooks';
 import { selectEntries, selectCyclicEntries } from '../redux/slices/entrySlice';
@@ -32,8 +31,7 @@ export default function EntryListScreen() {
         {!isCyclicList && <Text style={styles.titleText}>Your recent expenses</Text>}
         {isCyclicList && <Text style={styles.titleText}>Your cyclic expenses</Text>}
       </View>
-      {!isCyclicList && <EntryList entries={expenses} navigation={navigation} />}
-      {isCyclicList && <CycleEntryList entries={cyclicExpenses} navigation={navigation} />}
+      <EntryList entries={isCyclicList ? cyclicExpenses : expenses} navigation={navigation} />
       <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('AddEntryScreen')}>
         <Text style={styles.text}>Add new entry</Text>
       </TouchableOpacity>

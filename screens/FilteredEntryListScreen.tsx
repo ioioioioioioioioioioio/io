@@ -8,7 +8,6 @@ import React, {
   TouchableOpacity,
   View,
   Switch,
-  FlatList,
   Modal,
   TextInput,
 } from 'react-native';
@@ -17,7 +16,6 @@ import CalendarPicker from 'react-native-calendar-picker';
 import useTheme, { ColorTheme } from '../colors/Colors';
 import Button from '../components/Button';
 import CategoryList from '../components/CategoryList';
-import CycleEntryList from '../components/CycleEntryList';
 import EntryList from '../components/EntryList';
 import { useAppSelector } from '../redux/hooks';
 import { selectEntries, selectCyclicEntries } from '../redux/slices/entrySlice';
@@ -30,7 +28,7 @@ export default function FilteredEntryListScreen() {
   const navigation = useTypedNavigation();
   const [selectedCategoryName, setSelectedCategoryName] = useState('No Category');
   const [selectedCategoryColor, setSelectedCategoryColor] = useState('#ddff00');
-  const [selectedCategoryId, setSelectedCategoryId] = useState(0);
+  const [, setSelectedCategoryId] = useState(0);
   const [showCategoryList, setShowCategoryList] = useState(false);
   const [showStartCalendarModal, setShowStartCalendarModal] = useState(false);
   const [showEndCalendarModal, setShowEndCalendarModal] = useState(false);
@@ -97,7 +95,7 @@ export default function FilteredEntryListScreen() {
           </View>
           <View style={styles.rowContainer}>
             <View style={styles.detailContainer}>
-                <Text style={styles.text}>Choose Range</Text>
+              <Text style={styles.text}>Choose Range</Text>
               <AntDesign style={styles.icon} name="aliyun" size={45} color="white" />
               <TextInput
                 style={[styles.amountInput]}
@@ -122,18 +120,18 @@ export default function FilteredEntryListScreen() {
 
             {showCategoryList && (
               <CategoryList
-              onCategorySelect={(category) => {
-                setSelectedCategoryId(category.id);
-                setSelectedCategoryName(category.categoryName);
-                setSelectedCategoryColor(category.categoryColor);
-                setShowCategoryList(false);
-              }}
+                onCategorySelect={(category) => {
+                  setSelectedCategoryId(category.id);
+                  setSelectedCategoryName(category.categoryName);
+                  setSelectedCategoryColor(category.categoryColor);
+                  setShowCategoryList(false);
+                }}
               />
-              )}
+            )}
           </View>
           <View style={styles.rowContainer}>
             <View style={styles.detailContainer}>
-                <Text style={styles.text}>Choose Date  </Text>
+              <Text style={styles.text}>Choose Date </Text>
               <AntDesign style={styles.icon} name="calendar" size={45} color="white" />
               <TouchableOpacity onPress={() => setShowStartCalendarModal(true)}>
                 <Text style={styles.text}>{selectedStartDate ? formattedStartDate : '-'}</Text>
@@ -164,8 +162,7 @@ export default function FilteredEntryListScreen() {
           </View>
         </View>
       </View>
-      {!isCyclicList && <EntryList entries={expenses} navigation={navigation} />}
-      {isCyclicList && <CycleEntryList entries={cyclicExpenses} navigation={navigation} />}
+      <EntryList entries={isCyclicList ? cyclicExpenses : expenses} navigation={navigation} />
       <TouchableOpacity
         style={styles.button}
         onPress={() => navigation.navigate('FilteredEntryListScreen')}>
