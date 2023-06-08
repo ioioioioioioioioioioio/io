@@ -4,6 +4,7 @@ import React from 'react';
 import { Provider } from 'react-redux';
 
 import { store } from './redux/store';
+import AccountListScreen from './screens/AccountListScreen';
 import AddAccountScreen from './screens/AddAccountScreen';
 import AddEntryScreen from './screens/AddEntryScreen';
 import EditScreen from './screens/EditScreen';
@@ -22,6 +23,7 @@ export type RootStackParamList = {
   EditScreen: { id: number };
   EntryListScreen: undefined;
   FilteredEntryListScreen: undefined;
+  AccountListScreen: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -34,6 +36,7 @@ const featureList: Feature[] = [
   { title: 'Entry List', screenName: 'EntryListScreen', props: {} },
   { title: 'Filtered Entry List', screenName: 'FilteredEntryListScreen', props: {} },
   { title: 'Edit Entry', screenName: 'EditScreen', props: { id: 3 } },
+  { title: 'Account List', screenName: 'AccountListScreen', props: {} },
 ];
 
 export default function App() {
@@ -53,6 +56,7 @@ export default function App() {
           <Stack.Screen name="AddEntryScreen" component={AddEntryScreen} />
           <Stack.Screen name="EditScreen" component={EditScreen} />
           <Stack.Screen name="AddAccountScreen" component={AddAccountScreen} />
+          <Stack.Screen name="AccountListScreen" component={AccountListScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>
