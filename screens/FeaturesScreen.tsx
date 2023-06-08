@@ -13,7 +13,6 @@ export type Feature = {
     | 'AddEntryScreen'
     | 'EditScreen'
     | 'EntryListScreen'
-    | 'EditCyclicScreen'
     | 'AddAccountScreen'
     | 'FilteredEntryListScreen'
     | 'AccountListScreen';

@@ -28,8 +28,7 @@ import PhotoButton from '../components/PhotoButton';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { findAccount } from '../redux/slices/accountSlice';
 import { findCategory } from '../redux/slices/categoriesSlice';
-import { addCyclicEntry, Cycle } from '../redux/slices/cyclicEntrySlice';
-import { addEntry } from '../redux/slices/entrySlice';
+import { addEntry, Cycle } from '../redux/slices/entrySlice';
 import { RootState } from '../redux/store';
 
 type AddEntryScreenProps = NativeStackScreenProps<RootStackParamList, 'AddEntryScreen'>;
@@ -78,31 +77,19 @@ export default function AddEntryScreen({ navigation }: AddEntryScreenProps) {
           Alert.alert('Error', 'Pick desired cycle time!');
           return;
         }
-        dispatch(
-          addCyclicEntry({
-            name: finalName,
-            amount: numericAmount,
-            category: foundCategory,
-            imageUri: selectedImageURI,
-            date: selectedDate,
-            done: false,
-            cycle: Cycle[selectedCycleTime],
-            account: foundAccount,
-          })
-        );
-      } else {
-        dispatch(
-          addEntry({
-            name: finalName,
-            amount: numericAmount,
-            category: foundCategory,
-            date: selectedDate,
-            imageUri: selectedImageURI,
-            done: true,
-            account: foundAccount,
-          })
-        );
       }
+      dispatch(
+        addEntry({
+          name: finalName,
+          amount: numericAmount,
+          category: foundCategory,
+          imageUri: selectedImageURI,
+          date: selectedDate,
+          done: false,
+          cycle: Cycle[selectedCycleTime],
+          account: foundAccount,
+        })
+      );
     }
     navigation.goBack();
   }, [
