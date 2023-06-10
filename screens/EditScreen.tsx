@@ -74,9 +74,12 @@ export default function EditScreen({
       setSelectedCategoryId(selectedEntry.category.id);
       setSelectedCategoryName(selectedEntry.category.categoryName);
       setSelectedCategoryColor(selectedEntry.category.categoryColor);
-      setSelectedAccountName(selectedEntry.account.name);
-      setSelectedAccountId(selectedEntry.account.id);
-      setAccountCurrency(selectedEntry.account.currency);
+      const account = findAccount(state, selectedEntry.accountId);
+      if (account) {
+        setSelectedAccountName(account.name);
+        setSelectedAccountId(account.id);
+        setAccountCurrency(account.currency);
+      }
       setSelectedCycleTime(selectedEntry.cycle);
       // eslint-disable-next-line no-lone-blocks
       {
@@ -94,13 +97,11 @@ export default function EditScreen({
   const onSubmitEntry = React.useCallback(() => {
     const numericAmount = isIncome ? Number(amount) : -Number(amount);
     const foundCategory = findCategory(state, selectedCategoryId);
-    const foundAccount = findAccount(state, selectedAccountId);
-
     if (amount === '' || Number.isNaN(numericAmount)) {
       Alert.alert('Invalid amount', 'Please enter a correct amount');
       return;
     }
-    if (foundCategory && foundAccount) {
+    if (foundCategory) {
       dispatch(
         updateEntry({
           id: selectedEntry ? selectedEntry.id : 0,
@@ -110,7 +111,7 @@ export default function EditScreen({
           date: selectedDate,
           imageUri: selectedImageURI,
           done: isDone,
-          account: foundAccount,
+          accountId: selectedAccountId,
           cycle: selectedCycleTime,
         })
       );

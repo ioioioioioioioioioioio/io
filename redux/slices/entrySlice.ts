@@ -1,6 +1,5 @@
 import { createEntityAdapter, createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-import { Account } from './accountSlice';
 import { Category } from './categoriesSlice';
 import { RootState } from '../store';
 
@@ -16,7 +15,7 @@ export interface EntryState {
   id: number;
   name: string;
   amount: number;
-  account: Account;
+  accountId: number;
   category: Category;
   imageUri: string | null;
   date: Date;
@@ -38,7 +37,7 @@ export const entrySlice = createSlice({
         category: { categoryColor: '#1633e6', categoryName: 'Electronics', id: 3 },
         done: true,
         cycle: Cycle.Undefined,
-        account: { currency: 'PLN', name: 'test account', amount: 100, id: 1 },
+        accountId: 1,
       },
       2: {
         id: 2,
@@ -47,7 +46,7 @@ export const entrySlice = createSlice({
         category: { categoryColor: '#00aeef', categoryName: 'Home', id: 4 },
         done: false,
         cycle: Cycle.Undefined,
-        account: { currency: 'PLN', name: 'test account', amount: 100, id: 1 },
+        accountId: 1,
       },
       3: {
         id: 3,
@@ -56,7 +55,7 @@ export const entrySlice = createSlice({
         category: { categoryColor: '#ed1c24', categoryName: 'Food', id: 1 },
         done: true,
         cycle: Cycle.Undefined,
-        account: { currency: 'PLN', name: 'test account', amount: 100, id: 1 },
+        accountId: 1,
       },
       4: {
         id: 4,
@@ -64,7 +63,7 @@ export const entrySlice = createSlice({
         amount: -100,
         category: { categoryName: 'Home', categoryColor: '#00aeef', id: 4 },
         cycle: Cycle.Month,
-        account: { currency: 'PLN', name: 'test account', amount: 100, id: 1 },
+        accountId: 1,
       },
       5: {
         id: 5,
@@ -72,7 +71,7 @@ export const entrySlice = createSlice({
         amount: -150,
         category: { categoryName: 'Home', categoryColor: '#00aeef', id: 4 },
         cycle: Cycle.Month,
-        account: { currency: 'PLN', name: 'test account', amount: 100, id: 1 },
+        accountId: 1,
       },
     },
   }),
