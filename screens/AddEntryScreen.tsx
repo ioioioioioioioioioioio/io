@@ -26,7 +26,6 @@ import Button from '../components/Button';
 import CategoryList from '../components/CategoryList';
 import PhotoButton from '../components/PhotoButton';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
-import { findAccount } from '../redux/slices/accountSlice';
 import { findCategory } from '../redux/slices/categoriesSlice';
 import { addEntry, Cycle } from '../redux/slices/entrySlice';
 import { RootState } from '../redux/store';
@@ -66,12 +65,11 @@ export default function AddEntryScreen({ navigation }: AddEntryScreenProps) {
     const finalName = name.length === 0 ? defaultName : name;
     const numericAmount = isIncome ? Number(amount) : -Number(amount);
     const foundCategory = findCategory(state, selectedCategoryId);
-    const foundAccount = findAccount(state, selectedAccountId);
     if (amount === '' || Number.isNaN(numericAmount)) {
       Alert.alert('Invalid amount', 'Please enter a correct amount');
       return;
     }
-    if (foundCategory !== undefined && foundAccount !== undefined) {
+    if (foundCategory !== undefined) {
       if (cyclicExpenseChecked) {
         if (selectedCycleTime === Cycle.Undefined) {
           Alert.alert('Error', 'Pick desired cycle time!');
@@ -87,7 +85,7 @@ export default function AddEntryScreen({ navigation }: AddEntryScreenProps) {
           date: selectedDate,
           done: false,
           cycle: Cycle[selectedCycleTime],
-          account: foundAccount,
+          accountId: selectedAccountId,
         })
       );
     }
