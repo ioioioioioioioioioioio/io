@@ -25,6 +25,7 @@ import { RootStackParamList } from '../App';
 import Button from '../components/Button';
 import CategoryList from '../components/CategoryList';
 import PhotoButton from '../components/PhotoButton';
+import SharedWith from '../components/SharedWith';
 import { useAppSelector } from '../redux/hooks';
 import { findCategory } from '../redux/slices/categoriesSlice';
 import { Cycle } from '../redux/slices/entrySlice';
@@ -51,6 +52,8 @@ export default function AddEntryScreen({ navigation }: AddEntryScreenProps) {
   const [selectedCycleTime, setSelectedCycleTime] = useState(Cycle.Undefined);
   const [selectedImageURI, setSelectedImageURI] = useState<string | null>(null);
 
+  const [isShared, setIsShared] = useState(false);
+  const [sharedWith, setSharedWith] = useState<string[]>(['You']);
   const defaultName = isIncome ? 'New income' : 'New expense';
   const state = useSelector((state: RootState) => state);
   const formattedDate =
@@ -86,6 +89,7 @@ export default function AddEntryScreen({ navigation }: AddEntryScreenProps) {
         done: false,
         cycle: Cycle[selectedCycleTime],
         accountId: selectedAccountId,
+        sharedWith: isShared ? sharedWith : ['You'],
       });
     }
     navigation.goBack();
@@ -99,6 +103,8 @@ export default function AddEntryScreen({ navigation }: AddEntryScreenProps) {
     selectedCycleTime,
     cyclicExpenseChecked,
     selectedAccountId,
+    isShared,
+    sharedWith,
   ]);
 
   const amountInput = useRef<TextInput>(null);
@@ -246,6 +252,18 @@ export default function AddEntryScreen({ navigation }: AddEntryScreenProps) {
                 />
               )}
             </View>
+          </View>
+          <View style={styles.cyclicContainer}>
+            <CheckBox
+              title="Is Shared"
+              onPress={() => setIsShared(!isShared)}
+              checked={isShared}
+              checkedColor="black"
+              size={40}
+              center
+              containerStyle={styles.cyclicCheckbox}
+            />
+            {isShared && <SharedWith people={sharedWith} setPeople={setSharedWith} />}
           </View>
         </View>
 

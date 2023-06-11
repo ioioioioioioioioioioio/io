@@ -11,14 +11,20 @@ export const useEntryUpdater = () => {
     dispatch({ type: 'entries/updateEntry', payload: entry });
     dispatch({
       type: 'accounts/changeAccountBalance',
-      payload: { accountId: entry.accountId, amount: entry.amount - initialAmount },
+      payload: {
+        accountId: entry.accountId,
+        amount: entry.amount / Math.max(entry.sharedWith.length, 1) - initialAmount,
+      },
     });
   };
   const addEntry = (entry: Omit<EntryState, 'id'>) => {
     dispatch({ type: 'entries/addEntry', payload: entry });
     dispatch({
       type: 'accounts/changeAccountBalance',
-      payload: { accountId: entry.accountId, amount: entry.amount },
+      payload: {
+        accountId: entry.accountId,
+        amount: entry.amount / Math.max(entry.sharedWith.length, 1),
+      },
     });
   };
   return { updateEntry, addEntry };
