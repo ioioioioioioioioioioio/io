@@ -1,6 +1,6 @@
 import { groupBy } from 'lodash';
-import React from 'react';
-import { Dimensions, View } from 'react-native';
+import React, { useState } from 'react';
+import { View } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
 
 import useTheme from '../colors/Colors';
@@ -44,17 +44,23 @@ export default ({ begin, end }: { begin: Date; end: Date }) => {
     [data]
   );
 
+  const [chartParentSize, setChartParentSize] = useState({ width: 0, height: 0 });
+
   const theme = useTheme();
   return (
-    <View>
+    <View
+      onLayout={({ nativeEvent }) =>
+        setChartParentSize({ width: nativeEvent.layout.width, height: nativeEvent.layout.height })
+      }
+      style={{ flex: 1 }}>
       <LineChart
         hidePointsAtIndex={hidden}
         data={{
           labels,
           datasets: [{ data }],
         }}
-        width={Dimensions.get('window').width}
-        height={300}
+        width={chartParentSize.width}
+        height={chartParentSize.height}
         verticalLabelRotation={45}
         chartConfig={{
           backgroundColor: theme.backgroundPrimary,

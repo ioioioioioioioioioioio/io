@@ -38,7 +38,7 @@ export const entrySlice = createSlice({
         done: true,
         cycle: Cycle.Undefined,
         accountId: 1,
-        date: new Date('2021-01-03'),
+        date: new Date('2023-06-10'),
       },
       2: {
         id: 2,
@@ -48,7 +48,7 @@ export const entrySlice = createSlice({
         done: false,
         cycle: Cycle.Undefined,
         accountId: 1,
-        date: new Date('2021-01-02'),
+        date: new Date('2023-06-08'),
       },
       3: {
         id: 3,
@@ -58,7 +58,7 @@ export const entrySlice = createSlice({
         done: true,
         cycle: Cycle.Undefined,
         accountId: 1,
-        date: new Date('2021-01-06'),
+        date: new Date('2023-06-06'),
       },
       4: {
         id: 4,
