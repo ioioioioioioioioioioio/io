@@ -1,13 +1,12 @@
 import { AntDesign, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
-import React, { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { Alert, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import Button from './Button';
 import CategoryLabel from './CategoryLabel';
 import useTheme, { ColorTheme } from '../colors/Colors';
 import { useAppDispatch } from '../redux/hooks';
-import { Account } from '../redux/slices/accountSlice';
 import { Category } from '../redux/slices/categoriesSlice';
-import { Cycle, EntryState, removeEntry, updateEntry } from '../redux/slices/entrySlice';
+import { Cycle, EntryState, addEntry, removeEntry, updateEntry } from '../redux/slices/entrySlice';
 
 type EntryListProps = {
   entries: EntryState[];
@@ -44,6 +43,7 @@ function Entry({
         <CategoryLabel title={category?.categoryName} color={category?.categoryColor} />
       </View>
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        {cycle !== Cycle.Undefined && <Text style={styles.cycleText}>{cycle.toUpperCase()}</Text>}
         <Text style={styles.text}>{amount}</Text>
         <MaterialCommunityIcons name="arrow-right" color={theme.textPrimary} size={20} />
       </View>
@@ -67,22 +67,38 @@ export default function EntryList({ entries, navigation }: EntryListProps) {
     done: boolean,
     date: Date,
     imageUri: string | null,
-    account: Account,
+    accountId: number,
     cycle: Cycle
   ) => {
-    dispatch(
-      updateEntry({
-        id,
-        name,
-        amount,
-        category,
-        done: !done,
-        date,
-        imageUri,
-        account,
-        cycle,
-      })
-    );
+    if (cycle === Cycle.Undefined) {
+      dispatch(
+        updateEntry({
+          id,
+          name,
+          amount,
+          category,
+          done: !done,
+          date,
+          imageUri,
+          accountId,
+          cycle,
+        })
+      );
+    } else {
+      Alert.alert('Cyclic expense done', 'Expense created');
+      dispatch(
+        addEntry({
+          name,
+          amount,
+          category,
+          imageUri,
+          date: new Date(),
+          done: true,
+          cycle: Cycle.Undefined,
+          accountId,
+        })
+      );
+    }
   };
   return (
     <View style={styles.container}>
@@ -100,7 +116,7 @@ export default function EntryList({ entries, navigation }: EntryListProps) {
                 item.done,
                 item.date,
                 item.imageUri,
-                item.account,
+                item.accountId,
                 item.cycle
               )
             }
@@ -160,5 +176,10 @@ const useStyles = (theme: ColorTheme) =>
     },
     text: {
       color: theme.textPrimary,
+    },
+    cycleText: {
+      color: theme.primary,
+      fontSize: 18,
+      paddingHorizontal: 5,
     },
   });
