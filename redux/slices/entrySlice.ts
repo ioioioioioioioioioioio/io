@@ -112,4 +112,7 @@ export const selectCyclicEntries = (state: RootState) =>
 export const selectOneEntry = (id: number) => (state: RootState) =>
   entriesSelectors.selectById(state, id);
 
+export const entryExists = (id: number) => (state: RootState) =>
+  entriesSelectors.selectById(state, id) !== undefined;
+
 export default entrySlice.reducer;

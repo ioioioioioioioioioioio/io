@@ -25,11 +25,12 @@ import { RootStackParamList } from '../App';
 import Button from '../components/Button';
 import CategoryList from '../components/CategoryList';
 import PhotoButton from '../components/PhotoButton';
-import { useAppDispatch, useAppSelector } from '../redux/hooks';
+import { useAppSelector } from '../redux/hooks';
 import { findAccount } from '../redux/slices/accountSlice';
 import { findCategory } from '../redux/slices/categoriesSlice';
-import { Cycle, selectOneEntry, updateEntry } from '../redux/slices/entrySlice';
+import { Cycle, selectOneEntry } from '../redux/slices/entrySlice';
 import { RootState } from '../redux/store';
+import { useEntryUpdater } from '../utils/useEntryUpdater';
 
 type EditScreenProps = NativeStackScreenProps<RootStackParamList, 'EditScreen'>;
 
@@ -39,8 +40,6 @@ export default function EditScreen({
   },
   navigation,
 }: EditScreenProps) {
-  const dispatch = useAppDispatch();
-
   const [isIncome, setIsIncome] = useState(false);
   const [name, setName] = useState('');
   const [amount, setAmount] = useState('');
@@ -64,6 +63,8 @@ export default function EditScreen({
     selectedDate.getDate() + '.' + (selectedDate.getMonth() + 1) + '.' + selectedDate.getFullYear();
 
   const selectedEntry = useAppSelector((state) => selectOneEntry(id)(state));
+  const initialAmount = selectedEntry?.amount;
+  const { updateEntry } = useEntryUpdater();
 
   useEffect(() => {
     if (selectedEntry) {
@@ -102,8 +103,8 @@ export default function EditScreen({
       return;
     }
     if (foundCategory) {
-      dispatch(
-        updateEntry({
+      updateEntry(
+        {
           id: selectedEntry ? selectedEntry.id : 0,
           name,
           amount: numericAmount,
@@ -113,7 +114,8 @@ export default function EditScreen({
           done: isDone,
           accountId: selectedAccountId,
           cycle: selectedCycleTime,
-        })
+        },
+        initialAmount!
       );
     }
     navigation.goBack();

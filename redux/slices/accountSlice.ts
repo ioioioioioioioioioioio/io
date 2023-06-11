@@ -35,6 +35,13 @@ export const accountsSlice = createSlice({
         state.accounts.push({ id: selectNextAccountId(state), ...action.payload });
       }
     },
+    changeAccountBalance: (state, action: PayloadAction<{ accountId: number; amount: number }>) => {
+      const { accountId, amount } = action.payload;
+      const account = state.accounts.find((account) => account.id === accountId);
+      if (account) {
+        account.amount += amount;
+      }
+    },
   },
 });
 
