@@ -30,7 +30,7 @@ export default function FilteredEntryListScreen() {
   const navigation = useTypedNavigation();
   const [selectedCategoryName, setSelectedCategoryName] = useState('No Category');
   const [selectedCategoryColor, setSelectedCategoryColor] = useState('#ddff00');
-  // const [selectedCategoryId, setSelectedCategoryId] = useState(0);
+  const [, setSelectedCategoryId] = useState(0);
   const [showCategoryList, setShowCategoryList] = useState(false);
   const [showStartCalendarModal, setShowStartCalendarModal] = useState(false);
   const [showEndCalendarModal, setShowEndCalendarModal] = useState(false);
@@ -137,7 +137,6 @@ export default function FilteredEntryListScreen() {
           <View style={styles.rowContainer}>
             <View style={styles.detailContainer}>
               <Text style={styles.text}>Choose Category</Text>
-              {/* <AntDesign style={styles.icon} name="folder1" size={45} color="white" /> */}
               <TouchableOpacity
                 style={{
                   backgroundColor: selectedCategoryColor,
@@ -155,7 +154,7 @@ export default function FilteredEntryListScreen() {
             <View style={styles.rowContainer}>
               <CategoryList
                 onCategorySelect={(category) => {
-                  // setSelectedCategoryId(category.id);
+                  setSelectedCategoryId(category.id);
                   setSelectedCategoryName(category.categoryName);
                   setSelectedCategoryColor(category.categoryColor);
                   setShowCategoryList(false);
@@ -166,7 +165,6 @@ export default function FilteredEntryListScreen() {
           <View>
             <View style={styles.detailContainer}>
               <Text style={styles.text}>Choose Range </Text>
-              {/* <AntDesign style={styles.icon} name="aliyun" size={45} color="white" /> */}
               <TextInput
                 style={[styles.amountInput]}
                 placeholder="0"
@@ -188,7 +186,6 @@ export default function FilteredEntryListScreen() {
             <View style={styles.rowContainer}>
               <View style={styles.detailContainer}>
                 <Text style={styles.text}>Choose Date </Text>
-                {/* <AntDesign style={styles.icon} name="calendar" size={45} color="white" /> */}
                 <TouchableOpacity onPress={() => setShowStartCalendarModal(true)}>
                   <Text style={styles.amountInput}>
                     {selectedStartDate ? formattedStartDate : '-'}
