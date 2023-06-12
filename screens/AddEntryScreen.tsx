@@ -26,10 +26,8 @@ import Button from '../components/Button';
 import CategoryList from '../components/CategoryList';
 import PhotoButton from '../components/PhotoButton';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
-import { findAccount } from '../redux/slices/accountSlice';
 import { findCategory } from '../redux/slices/categoriesSlice';
-import { addCyclicEntry, Cycle } from '../redux/slices/cyclicEntrySlice';
-import { addEntry } from '../redux/slices/entrySlice';
+import { addEntry, Cycle } from '../redux/slices/entrySlice';
 import { RootState } from '../redux/store';
 
 type AddEntryScreenProps = NativeStackScreenProps<RootStackParamList, 'AddEntryScreen'>;
@@ -67,42 +65,29 @@ export default function AddEntryScreen({ navigation }: AddEntryScreenProps) {
     const finalName = name.length === 0 ? defaultName : name;
     const numericAmount = isIncome ? Number(amount) : -Number(amount);
     const foundCategory = findCategory(state, selectedCategoryId);
-    const foundAccount = findAccount(state, selectedAccountId);
     if (amount === '' || Number.isNaN(numericAmount)) {
       Alert.alert('Invalid amount', 'Please enter a correct amount');
       return;
     }
-    if (foundCategory !== undefined && foundAccount !== undefined) {
+    if (foundCategory !== undefined) {
       if (cyclicExpenseChecked) {
         if (selectedCycleTime === Cycle.Undefined) {
           Alert.alert('Error', 'Pick desired cycle time!');
           return;
         }
-        dispatch(
-          addCyclicEntry({
-            name: finalName,
-            amount: numericAmount,
-            category: foundCategory,
-            imageUri: selectedImageURI,
-            date: selectedDate,
-            done: false,
-            cycle: Cycle[selectedCycleTime],
-            account: foundAccount,
-          })
-        );
-      } else {
-        dispatch(
-          addEntry({
-            name: finalName,
-            amount: numericAmount,
-            category: foundCategory,
-            date: selectedDate,
-            imageUri: selectedImageURI,
-            done: true,
-            account: foundAccount,
-          })
-        );
       }
+      dispatch(
+        addEntry({
+          name: finalName,
+          amount: numericAmount,
+          category: foundCategory,
+          imageUri: selectedImageURI,
+          date: selectedDate,
+          done: false,
+          cycle: Cycle[selectedCycleTime],
+          accountId: selectedAccountId,
+        })
+      );
     }
     navigation.goBack();
   }, [

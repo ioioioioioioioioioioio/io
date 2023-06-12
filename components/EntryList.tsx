@@ -1,11 +1,13 @@
-import { AntDesign, MaterialCommunityIcons } from '@expo/vector-icons';
+import { AntDesign, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import React, { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
+import Button from './Button';
 import CategoryLabel from './CategoryLabel';
 import useTheme, { ColorTheme } from '../colors/Colors';
 import { useAppDispatch } from '../redux/hooks';
+import { Account } from '../redux/slices/accountSlice';
 import { Category } from '../redux/slices/categoriesSlice';
-import { EntryState, updateEntry } from '../redux/slices/entrySlice';
+import { Cycle, EntryState, removeEntry, updateEntry } from '../redux/slices/entrySlice';
 
 type EntryListProps = {
   entries: EntryState[];
@@ -17,16 +19,25 @@ function Entry({
   amount,
   category,
   done,
+  cycle,
   onPress,
   onLongPress,
-}: EntryState & { onPress: () => void } & { onLongPress: () => void }) {
+  onDelete,
+}: EntryState & { onPress: () => void } & { onLongPress: () => void } & { onDelete: () => void }) {
   const theme = useTheme();
   const styles = useStyles(theme);
 
   return (
     <TouchableOpacity style={styles.entryContainer} onPress={onPress} onLongPress={onLongPress}>
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-        {!done && (
+        <Button
+          onPress={() => {
+            onDelete();
+          }}
+          style={{ alignItems: 'center' }}>
+          <MaterialIcons name="close" size={30} color={theme.primary} />
+        </Button>
+        {!done && cycle === Cycle.Undefined && (
           <AntDesign name="hourglass" color={theme.primary} style={{ paddingRight: 2 }} size={20} />
         )}
         <Text style={styles.text}>{name} </Text>
@@ -44,6 +55,10 @@ export default function EntryList({ entries, navigation }: EntryListProps) {
   const theme = useTheme();
   const styles = useStyles(theme);
   const dispatch = useAppDispatch();
+  const handleEntryDelete = (id: number) => {
+    dispatch(removeEntry(id));
+  };
+
   const handleLongPress = (
     id: number,
     name: string,
@@ -51,7 +66,9 @@ export default function EntryList({ entries, navigation }: EntryListProps) {
     category: Category,
     done: boolean,
     date: Date,
-    imageUri: string | null
+    imageUri: string | null,
+    account: Account,
+    cycle: Cycle
   ) => {
     dispatch(
       updateEntry({
@@ -62,6 +79,8 @@ export default function EntryList({ entries, navigation }: EntryListProps) {
         done: !done,
         date,
         imageUri,
+        account,
+        cycle,
       })
     );
   };
@@ -80,10 +99,13 @@ export default function EntryList({ entries, navigation }: EntryListProps) {
                 item.category,
                 item.done,
                 item.date,
-                item.imageUri
+                item.imageUri,
+                item.account,
+                item.cycle
               )
             }
             onPress={() => navigation.navigate('EditScreen', { id: item.id })}
+            onDelete={() => handleEntryDelete(item.id)}
           />
         )}
         keyExtractor={(item) => String(item.id * Math.random())}

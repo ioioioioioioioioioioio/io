@@ -16,11 +16,9 @@ import CalendarPicker from 'react-native-calendar-picker';
 import useTheme, { ColorTheme } from '../colors/Colors';
 import Button from '../components/Button';
 import CategoryList from '../components/CategoryList';
-import CycleEntryList from '../components/CycleEntryList';
 import EntryList from '../components/EntryList';
 import { useAppSelector } from '../redux/hooks';
-import { selectCyclicEntries } from '../redux/slices/cyclicEntrySlice';
-import { selectEntries } from '../redux/slices/entrySlice';
+import { selectEntries, selectCyclicEntries } from '../redux/slices/entrySlice';
 import useTypedNavigation from '../utils/useTypedNavigation';
 
 export default function FilteredEntryListScreen() {
@@ -218,8 +216,10 @@ export default function FilteredEntryListScreen() {
           )}
         </View>
       </View>
-      {!isCyclicList && <EntryList entries={filteredExpenses} navigation={navigation} />}
-      {isCyclicList && <CycleEntryList entries={filteredCyclicExpenses} navigation={navigation} />}
+      <EntryList
+        entries={isCyclicList ? filteredCyclicExpenses : filteredExpenses}
+        navigation={navigation}
+      />
       <TouchableOpacity style={styles.button} onPress={applyFilter}>
         <Text style={styles.text}>Update Filter...</Text>
       </TouchableOpacity>

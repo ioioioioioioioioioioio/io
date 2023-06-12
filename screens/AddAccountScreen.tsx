@@ -36,7 +36,7 @@ export default function AddEntryScreen({ navigation }: AddAccountScreenProps) {
       })
     );
     navigation.goBack();
-  }, [name, amount]);
+  }, [name, amount, currency]);
 
   return (
     <View style={styles.container}>

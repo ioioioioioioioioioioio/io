@@ -18,6 +18,7 @@ import {
   View,
 } from 'react-native';
 import CalendarPicker from 'react-native-calendar-picker';
+import { SelectList } from 'react-native-dropdown-select-list';
 import { useSelector } from 'react-redux';
 
 import { RootStackParamList } from '../App';
@@ -27,7 +28,7 @@ import PhotoButton from '../components/PhotoButton';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { findAccount } from '../redux/slices/accountSlice';
 import { findCategory } from '../redux/slices/categoriesSlice';
-import { selectOneEntry, updateEntry } from '../redux/slices/entrySlice';
+import { Cycle, selectOneEntry, updateEntry } from '../redux/slices/entrySlice';
 import { RootState } from '../redux/store';
 
 type EditScreenProps = NativeStackScreenProps<RootStackParamList, 'EditScreen'>;
@@ -55,6 +56,7 @@ export default function EditScreen({
   const [selectedAccountName, setSelectedAccountName] = useState('');
   const [showAccountList, setShowAccountList] = useState(false);
   const [accountCurrency, setAccountCurrency] = useState('');
+  const [selectedCycleTime, setSelectedCycleTime] = useState(Cycle.Undefined);
 
   const defaultName = isIncome ? 'New income' : 'New expense';
   const state = useSelector((state: RootState) => state);
@@ -72,9 +74,13 @@ export default function EditScreen({
       setSelectedCategoryId(selectedEntry.category.id);
       setSelectedCategoryName(selectedEntry.category.categoryName);
       setSelectedCategoryColor(selectedEntry.category.categoryColor);
-      setSelectedAccountName(selectedEntry.account.name);
-      setSelectedAccountId(selectedEntry.account.id);
-      setAccountCurrency(selectedEntry.account.currency);
+      const account = findAccount(state, selectedEntry.accountId);
+      if (account) {
+        setSelectedAccountName(account.name);
+        setSelectedAccountId(account.id);
+        setAccountCurrency(account.currency);
+      }
+      setSelectedCycleTime(selectedEntry.cycle);
       // eslint-disable-next-line no-lone-blocks
       {
         selectedEntry && selectedEntry.date && setSelectedDate(selectedEntry.date);
@@ -91,13 +97,11 @@ export default function EditScreen({
   const onSubmitEntry = React.useCallback(() => {
     const numericAmount = isIncome ? Number(amount) : -Number(amount);
     const foundCategory = findCategory(state, selectedCategoryId);
-    const foundAccount = findAccount(state, selectedAccountId);
-
     if (amount === '' || Number.isNaN(numericAmount)) {
       Alert.alert('Invalid amount', 'Please enter a correct amount');
       return;
     }
-    if (foundCategory && foundAccount) {
+    if (foundCategory) {
       dispatch(
         updateEntry({
           id: selectedEntry ? selectedEntry.id : 0,
@@ -107,7 +111,8 @@ export default function EditScreen({
           date: selectedDate,
           imageUri: selectedImageURI,
           done: isDone,
-          account: foundAccount,
+          accountId: selectedAccountId,
+          cycle: selectedCycleTime,
         })
       );
     }
@@ -121,6 +126,7 @@ export default function EditScreen({
     selectedDate,
     selectedImageURI,
     selectedAccountId,
+    selectedCycleTime,
   ]);
 
   const amountInput = useRef<TextInput>(null);
@@ -242,6 +248,21 @@ export default function EditScreen({
             </TouchableOpacity>
             {selectedImageURI && <PhotoButton uri={selectedImageURI} />}
           </View>
+          <View style={styles.cycleContainer}>
+            {selectedCycleTime !== Cycle.Undefined && (
+              <SelectList
+                search={false}
+                setSelected={setSelectedCycleTime}
+                placeholder={selectedCycleTime}
+                data={[
+                  { key: Cycle.Day, value: Cycle.Day },
+                  { key: Cycle.Week, value: Cycle.Week },
+                  { key: Cycle.Month, value: Cycle.Month },
+                  { key: Cycle.Year, value: Cycle.Year },
+                ]}
+              />
+            )}
+          </View>
         </View>
 
         <View style={styles.buttonContainer}>
@@ -345,5 +366,8 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-end',
     marginLeft: 3,
     marginRight: 3,
+  },
+  cycleContainer: {
+    borderBottomWidth: 1,
   },
 });
