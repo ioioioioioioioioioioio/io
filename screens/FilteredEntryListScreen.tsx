@@ -62,10 +62,6 @@ export default function FilteredEntryListScreen() {
         expense.date && expense.date >= selectedStartDate && expense.date <= selectedEndDate
     );
     result = filteredByDate;
-    // console.log(
-    //   'normal',
-    //   result.map((expense) => expense.amount)
-    // );
     setFilteredExpenses(result);
 
     // CYCLIC
@@ -85,13 +81,7 @@ export default function FilteredEntryListScreen() {
         (Math.abs(expense.amount) <= parseInt(endAmount, 10) || parseInt(endAmount, 10) === 0)
     );
     resultCyclic = filteredByAmountCyclic;
-
-    // console.log(
-    //   'cyclic',
-    //   resultCyclic.map((expense) => expense.amount)
-    // );
     setFilteredCyclicExpenses(resultCyclic);
-    // console.log();
   };
 
   const toggleSwitch = () => {
@@ -277,9 +267,7 @@ const useStyles = (theme: ColorTheme) =>
       paddingLeft: 10,
       color: 'white',
       flexDirection: 'row',
-      // justifyContent: 'flex-start',
       alignItems: 'center',
-      // borderBottomWidth: 1,
     },
     text: {
       color: theme.textPrimary,
@@ -298,7 +286,6 @@ const useStyles = (theme: ColorTheme) =>
     },
     rowContainer: {
       flexDirection: 'row',
-      // justifyContent: 'space-between',
       alignItems: 'flex-start',
       paddingBottom: 30,
     },
