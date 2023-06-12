@@ -21,6 +21,7 @@ export interface EntryState {
   date: Date;
   done: boolean;
   cycle: Cycle;
+  sharedWith: string[];
 }
 
 const entryAdapter = createEntityAdapter<EntryState>();
@@ -39,6 +40,7 @@ export const entrySlice = createSlice({
         cycle: Cycle.Undefined,
         accountId: 1,
         date: new Date('2023-06-10'),
+        sharedWith: ['user1', 'user2'],
       },
       2: {
         id: 2,
@@ -49,6 +51,7 @@ export const entrySlice = createSlice({
         cycle: Cycle.Undefined,
         accountId: 1,
         date: new Date('2023-06-08'),
+        sharedWith: ['user1', 'user2', 'user3'],
       },
       3: {
         id: 3,
@@ -59,6 +62,7 @@ export const entrySlice = createSlice({
         cycle: Cycle.Undefined,
         accountId: 1,
         date: new Date('2023-06-06'),
+        sharedWith: ['user1', 'user2', 'user3', 'user4'],
       },
       4: {
         id: 4,
@@ -67,6 +71,7 @@ export const entrySlice = createSlice({
         category: { categoryName: 'Home', categoryColor: '#00aeef', id: 4 },
         cycle: Cycle.Month,
         accountId: 1,
+        sharedWith: ['user1', 'user2', 'user3', 'user5'],
       },
       5: {
         id: 5,
@@ -75,6 +80,7 @@ export const entrySlice = createSlice({
         category: { categoryName: 'Home', categoryColor: '#00aeef', id: 4 },
         cycle: Cycle.Month,
         accountId: 1,
+        sharedWith: ['user1', 'user2', 'user3', 'user5', 'Kupol'],
       },
     },
   }),
@@ -111,5 +117,8 @@ export const selectCyclicEntries = (state: RootState) =>
     .filter((val) => val !== undefined && val.cycle !== Cycle.Undefined);
 export const selectOneEntry = (id: number) => (state: RootState) =>
   entriesSelectors.selectById(state, id);
+
+export const entryExists = (id: number) => (state: RootState) =>
+  entriesSelectors.selectById(state, id) !== undefined;
 
 export default entrySlice.reducer;

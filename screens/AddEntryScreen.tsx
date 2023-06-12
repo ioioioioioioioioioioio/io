@@ -1,20 +1,20 @@
-import { MaterialIcons, AntDesign, FontAwesome5 } from '@expo/vector-icons';
+import { AntDesign, FontAwesome5, MaterialIcons } from '@expo/vector-icons';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { copyAsync, deleteAsync, documentDirectory } from 'expo-file-system';
-import { MediaTypeOptions, launchImageLibraryAsync } from 'expo-image-picker';
+import { launchImageLibraryAsync, MediaTypeOptions } from 'expo-image-picker';
 import { Moment } from 'moment';
-import React, { useState, useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import {
-  StyleSheet,
-  View,
-  TextInput,
   Alert,
-  Text,
-  TouchableOpacity,
-  Modal,
   FlatList,
-  TouchableWithoutFeedback,
   Keyboard,
+  Modal,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  View,
 } from 'react-native';
 import CalendarPicker from 'react-native-calendar-picker';
 import { SelectList } from 'react-native-dropdown-select-list';
@@ -25,16 +25,16 @@ import { RootStackParamList } from '../App';
 import Button from '../components/Button';
 import CategoryList from '../components/CategoryList';
 import PhotoButton from '../components/PhotoButton';
-import { useAppDispatch, useAppSelector } from '../redux/hooks';
+import SharedWith from '../components/SharedWith';
+import { useAppSelector } from '../redux/hooks';
 import { findCategory } from '../redux/slices/categoriesSlice';
-import { addEntry, Cycle } from '../redux/slices/entrySlice';
+import { Cycle } from '../redux/slices/entrySlice';
 import { RootState } from '../redux/store';
+import { useEntryUpdater } from '../utils/useEntryUpdater';
 
 type AddEntryScreenProps = NativeStackScreenProps<RootStackParamList, 'AddEntryScreen'>;
 
 export default function AddEntryScreen({ navigation }: AddEntryScreenProps) {
-  const dispatch = useAppDispatch();
-
   const [isIncome, setIsIncome] = useState(false);
   const [name, setName] = useState('');
   const [amount, setAmount] = useState('');
@@ -52,10 +52,14 @@ export default function AddEntryScreen({ navigation }: AddEntryScreenProps) {
   const [selectedCycleTime, setSelectedCycleTime] = useState(Cycle.Undefined);
   const [selectedImageURI, setSelectedImageURI] = useState<string | null>(null);
 
+  const [isShared, setIsShared] = useState(false);
+  const [sharedWith, setSharedWith] = useState<string[]>(['You']);
   const defaultName = isIncome ? 'New income' : 'New expense';
   const state = useSelector((state: RootState) => state);
   const formattedDate =
     selectedDate.getDate() + '.' + (selectedDate.getMonth() + 1) + '.' + selectedDate.getFullYear();
+
+  const { addEntry } = useEntryUpdater();
 
   const onDateChange = (date: Moment) => {
     setSelectedDate(date.toDate());
@@ -76,18 +80,17 @@ export default function AddEntryScreen({ navigation }: AddEntryScreenProps) {
           return;
         }
       }
-      dispatch(
-        addEntry({
-          name: finalName,
-          amount: numericAmount,
-          category: foundCategory,
-          imageUri: selectedImageURI,
-          date: selectedDate,
-          done: false,
-          cycle: Cycle[selectedCycleTime],
-          accountId: selectedAccountId,
-        })
-      );
+      addEntry({
+        name: finalName,
+        amount: numericAmount,
+        category: foundCategory,
+        imageUri: selectedImageURI,
+        date: selectedDate,
+        done: false,
+        cycle: Cycle[selectedCycleTime],
+        accountId: selectedAccountId,
+        sharedWith: isShared ? sharedWith : ['You'],
+      });
     }
     navigation.goBack();
   }, [
@@ -100,6 +103,8 @@ export default function AddEntryScreen({ navigation }: AddEntryScreenProps) {
     selectedCycleTime,
     cyclicExpenseChecked,
     selectedAccountId,
+    isShared,
+    sharedWith,
   ]);
 
   const amountInput = useRef<TextInput>(null);
@@ -247,6 +252,18 @@ export default function AddEntryScreen({ navigation }: AddEntryScreenProps) {
                 />
               )}
             </View>
+          </View>
+          <View style={styles.cyclicContainer}>
+            <CheckBox
+              title="Is Shared"
+              onPress={() => setIsShared(!isShared)}
+              checked={isShared}
+              checkedColor="black"
+              size={40}
+              center
+              containerStyle={styles.cyclicCheckbox}
+            />
+            {isShared && <SharedWith people={sharedWith} setPeople={setSharedWith} />}
           </View>
         </View>
 
