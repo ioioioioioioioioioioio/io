@@ -11,7 +11,7 @@ const displayDate = (n: number) => n.toLocaleString('en-US', { minimumIntegerDig
 
 // Example use:
 // `<Chart begin={new Date('2021-01-01')} end={new Date('2021-01-010')} />`
-export default ({ begin, end }: { begin: Date; end: Date }) => {
+export default ({ begin, end, categoryID }: { begin: Date; end: Date; categoryID?: number }) => {
   const days = React.useMemo(() => {
     const days = [];
     for (const d = new Date(begin); d <= end; d.setDate(d.getDate() + 1)) {
@@ -21,7 +21,9 @@ export default ({ begin, end }: { begin: Date; end: Date }) => {
   }, [begin, end]);
 
   const entries = useAppSelector((state) =>
-    selectEntries(state).filter((e) => begin <= e.date && e.date <= end)
+    selectEntries(state).filter(
+      (e) => begin <= e.date && e.date <= end && (!categoryID || e.category.id === categoryID)
+    )
   );
 
   const data = React.useMemo(() => {
