@@ -46,7 +46,7 @@ export default function AccountList({ accounts }: AccountListProps) {
                 flex: 1,
                 justifyContent: 'flex-end',
               }}>
-              <Text style={styles.text}>{item.amount}</Text>
+              <Text style={styles.text}>{Math.round(item.amount * 100) / 100}</Text>
             </View>
             <View style={{ marginLeft: 3, flexDirection: 'row', alignItems: 'center' }}>
               <Text style={styles.text}>{item.currency} </Text>

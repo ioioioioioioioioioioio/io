@@ -19,17 +19,20 @@ import {
 } from 'react-native';
 import CalendarPicker from 'react-native-calendar-picker';
 import { SelectList } from 'react-native-dropdown-select-list';
+import { CheckBox } from 'react-native-elements';
 import { useSelector } from 'react-redux';
 
 import { RootStackParamList } from '../App';
 import Button from '../components/Button';
 import CategoryList from '../components/CategoryList';
 import PhotoButton from '../components/PhotoButton';
-import { useAppDispatch, useAppSelector } from '../redux/hooks';
+import SharedWith from '../components/SharedWith';
+import { useAppSelector } from '../redux/hooks';
 import { findAccount } from '../redux/slices/accountSlice';
 import { findCategory } from '../redux/slices/categoriesSlice';
-import { Cycle, selectOneEntry, updateEntry } from '../redux/slices/entrySlice';
+import { Cycle, selectOneEntry } from '../redux/slices/entrySlice';
 import { RootState } from '../redux/store';
+import { useEntryUpdater } from '../utils/useEntryUpdater';
 
 type EditScreenProps = NativeStackScreenProps<RootStackParamList, 'EditScreen'>;
 
@@ -39,8 +42,6 @@ export default function EditScreen({
   },
   navigation,
 }: EditScreenProps) {
-  const dispatch = useAppDispatch();
-
   const [isIncome, setIsIncome] = useState(false);
   const [name, setName] = useState('');
   const [amount, setAmount] = useState('');
@@ -58,12 +59,17 @@ export default function EditScreen({
   const [accountCurrency, setAccountCurrency] = useState('');
   const [selectedCycleTime, setSelectedCycleTime] = useState(Cycle.Undefined);
 
+  const [isShared, setIsShared] = useState(false);
+  const [sharedWith, setSharedWith] = useState<string[]>(['You']);
+
   const defaultName = isIncome ? 'New income' : 'New expense';
   const state = useSelector((state: RootState) => state);
   const formattedDate =
     selectedDate.getDate() + '.' + (selectedDate.getMonth() + 1) + '.' + selectedDate.getFullYear();
 
   const selectedEntry = useAppSelector((state) => selectOneEntry(id)(state));
+  const initialAmount = selectedEntry!.amount / Math.max(selectedEntry!.sharedWith.length, 1);
+  const { updateEntry } = useEntryUpdater();
 
   useEffect(() => {
     if (selectedEntry) {
@@ -75,6 +81,8 @@ export default function EditScreen({
       setSelectedCategoryName(selectedEntry.category.categoryName);
       setSelectedCategoryColor(selectedEntry.category.categoryColor);
       const account = findAccount(state, selectedEntry.accountId);
+      setIsShared(selectedEntry.sharedWith.length > 1);
+      setSharedWith(selectedEntry.sharedWith);
       if (account) {
         setSelectedAccountName(account.name);
         setSelectedAccountId(account.id);
@@ -102,8 +110,8 @@ export default function EditScreen({
       return;
     }
     if (foundCategory) {
-      dispatch(
-        updateEntry({
+      updateEntry(
+        {
           id: selectedEntry ? selectedEntry.id : 0,
           name,
           amount: numericAmount,
@@ -113,7 +121,9 @@ export default function EditScreen({
           done: isDone,
           accountId: selectedAccountId,
           cycle: selectedCycleTime,
-        })
+          sharedWith,
+        },
+        initialAmount!
       );
     }
     navigation.goBack();
@@ -127,6 +137,8 @@ export default function EditScreen({
     selectedImageURI,
     selectedAccountId,
     selectedCycleTime,
+    isShared,
+    sharedWith,
   ]);
 
   const amountInput = useRef<TextInput>(null);
@@ -262,6 +274,18 @@ export default function EditScreen({
                 ]}
               />
             )}
+          </View>
+          <View style={styles.cyclicContainer}>
+            <CheckBox
+              title="Is Shared"
+              onPress={() => setIsShared(!isShared)}
+              checked={isShared}
+              checkedColor="black"
+              size={40}
+              center
+              containerStyle={styles.cyclicCheckbox}
+            />
+            {isShared && <SharedWith people={sharedWith} setPeople={setSharedWith} />}
           </View>
         </View>
 
