@@ -68,7 +68,8 @@ export default function EntryList({ entries, navigation }: EntryListProps) {
     date: Date,
     imageUri: string | null,
     accountId: number,
-    cycle: Cycle
+    cycle: Cycle,
+    sharedWith: string[]
   ) => {
     if (cycle === Cycle.Undefined) {
       dispatch(
@@ -82,6 +83,7 @@ export default function EntryList({ entries, navigation }: EntryListProps) {
           imageUri,
           accountId,
           cycle,
+          sharedWith,
         })
       );
     } else {
@@ -96,6 +98,7 @@ export default function EntryList({ entries, navigation }: EntryListProps) {
           done: true,
           cycle: Cycle.Undefined,
           accountId,
+          sharedWith,
         })
       );
     }
@@ -117,7 +120,8 @@ export default function EntryList({ entries, navigation }: EntryListProps) {
                 item.date,
                 item.imageUri,
                 item.accountId,
-                item.cycle
+                item.cycle,
+                item.sharedWith
               )
             }
             onPress={() => navigation.navigate('EditScreen', { id: item.id })}

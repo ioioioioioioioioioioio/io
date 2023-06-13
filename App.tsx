@@ -37,7 +37,6 @@ const featureList: Feature[] = [
   { title: 'Add Account', screenName: 'AddAccountScreen', props: {} },
   { title: 'Entry List', screenName: 'EntryListScreen', props: {} },
   { title: 'Filtered Entry List', screenName: 'FilteredEntryListScreen', props: {} },
-  { title: 'Edit Entry', screenName: 'EditScreen', props: { id: 3 } },
   { title: 'Account List', screenName: 'AccountListScreen', props: {} },
   { title: 'Chart', screenName: 'ChartScreen', props: {} },
 ];

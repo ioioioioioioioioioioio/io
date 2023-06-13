@@ -15,7 +15,10 @@ export interface AccountsState {
 }
 
 const initialState: AccountsState = {
-  accounts: [{ name: 'test account', amount: 100, id: 1, currency: 'PLN' }],
+  accounts: [
+    { name: 'test account', amount: 100, id: 1, currency: 'PLN' },
+    { name: 'main account', amount: 100000, id: 2, currency: 'PLN' },
+  ],
 };
 
 export const accountsSlice = createSlice({

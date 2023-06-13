@@ -11,7 +11,6 @@ export type Feature = {
     | 'PetScreen'
     | 'InfoScreen'
     | 'AddEntryScreen'
-    | 'EditScreen'
     | 'EntryListScreen'
     | 'AddAccountScreen'
     | 'FilteredEntryListScreen'
