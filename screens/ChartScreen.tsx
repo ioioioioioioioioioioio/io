@@ -6,6 +6,7 @@ import CalendarPicker from 'react-native-calendar-picker';
 
 import useTheme, { ColorTheme } from '../colors/Colors';
 import Button from '../components/Button';
+import CategoryList from '../components/CategoryList';
 import Chart from '../components/Chart';
 
 const weekInMs = 7 * 24 * 60 * 60 * 1000;
@@ -33,24 +34,29 @@ export default () => {
     }
   };
 
+  const [showCategoryList, setShowCategoryList] = useState(false);
+  const [selectedCategoryName, setSelectedCategoryName] = useState<string | null>(null);
+  const [selectedCategoryColor, setSelectedCategoryColor] = useState('#ddff00');
+  const [selectedCategoryId, setSelectedCategoryId] = useState(0);
+
   return (
     <View style={styles.mainContainer}>
       <View style={styles.container}>
         <View style={styles.sectionContainer}>
-          <Text style={styles.dateSelectorText}>From:</Text>
-          <View style={styles.dateSelectorContainer}>
+          <Text style={styles.text}>From:</Text>
+          <View style={styles.selectorContainer}>
             <AntDesign name="calendar" size={45} color={theme.textPrimary} />
             <TouchableOpacity onPress={() => setShowCalendarModal('from')}>
-              <Text style={styles.dateSelectorText}>{formattedDates[0]}</Text>
+              <Text style={styles.text}>{formattedDates[0]}</Text>
             </TouchableOpacity>
           </View>
         </View>
         <View style={styles.sectionContainer}>
-          <Text style={styles.dateSelectorText}>To:</Text>
-          <View style={styles.dateSelectorContainer}>
+          <Text style={styles.text}>To:</Text>
+          <View style={styles.selectorContainer}>
             <AntDesign name="calendar" size={45} color={theme.textPrimary} />
             <TouchableOpacity onPress={() => setShowCalendarModal('to')}>
-              <Text style={styles.dateSelectorText}>{formattedDates[1]}</Text>
+              <Text style={styles.text}>{formattedDates[1]}</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -70,7 +76,32 @@ export default () => {
             </Button>
           </Modal>
         </View>
-        <Chart begin={selectedDates[0]} end={selectedDates[1]} />
+        <View style={styles.sectionContainer}>
+          <Text style={styles.text}>Category:</Text>
+          <View style={styles.selectorContainer}>
+            <MaterialIcons name="folder" size={50} color="white" />
+            <TouchableOpacity
+              style={{
+                backgroundColor: selectedCategoryColor,
+                padding: 10,
+                borderRadius: 5,
+              }}
+              onPress={() => setShowCategoryList(!showCategoryList)}>
+              <Text style={styles.text}>{selectedCategoryName ?? 'Select category'}</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+        {showCategoryList && (
+          <CategoryList
+            onCategorySelect={(category) => {
+              setSelectedCategoryId(category.id);
+              setSelectedCategoryName(category.categoryName);
+              setSelectedCategoryColor(category.categoryColor);
+              setShowCategoryList(false);
+            }}
+          />
+        )}
+        <Chart begin={selectedDates[0]} end={selectedDates[1]} categoryID={selectedCategoryId} />
       </View>
     </View>
   );
@@ -100,13 +131,13 @@ const useStyles = (theme: ColorTheme) =>
       borderBottomWidth: 1,
       borderColor: theme.primary,
     },
-    dateSelectorContainer: {
+    selectorContainer: {
       paddingLeft: 10,
       flexDirection: 'row',
       justifyContent: 'flex-start',
       alignItems: 'center',
     },
-    dateSelectorText: {
+    text: {
       paddingLeft: 10,
       color: theme.textPrimary,
     },
